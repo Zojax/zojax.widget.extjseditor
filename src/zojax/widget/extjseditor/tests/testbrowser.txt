@@ -1,0 +1,165 @@
+===================
+ExtJS Editor widget
+===================
+
+    >>> from zope import component, interface, event
+    >>> from zope.testbrowser.testing import Browser
+    >>> from zope.lifecycleevent import ObjectCreatedEvent
+    >>> from zope.app.security.interfaces import IAuthentication
+    >>> from zope.app.testing.functional import getRootFolder
+    >>> from zope.app.component.hooks import setSite
+    >>> from zope.app.intid import IntIds
+    >>> from zope.app.intid.interfaces import IIntIds
+    >>> from zojax.personal.space.manager import PersonalSpaceManager
+    >>> from zojax.personal.space.interfaces import IPersonalSpaceManager
+    >>> from zojax.widget.extjseditor.tests.content import Page
+    >>> from zojax.widget.extjseditor.tests.tests import getPath
+
+    >>> root = getRootFolder()
+    >>> setSite(root)
+
+    >>> root['ids'] = IntIds()
+    >>> root.getSiteManager().registerUtility(root['ids'], IIntIds)
+
+    >>> manager = PersonalSpaceManager(title=u'People')
+    >>> event.notify(ObjectCreatedEvent(manager))
+
+    >>> root['people'] = manager
+    >>> root.getSiteManager().registerUtility(root['people'], IPersonalSpaceManager)
+
+    >>> manager.assignPersonalSpace(
+    ...     component.getUtility(IAuthentication).getPrincipal('zope.user'))
+
+    >>> page = Page()
+    >>> event.notify(ObjectCreatedEvent(page))
+    >>> root['page'] = page
+
+Select editor
+-------------
+
+    >>> user = Browser()
+    >>> user.addHeader("Authorization", "Basic user:userpw")
+    >>> user.handleErrors = False
+
+    >>> user.open('http://localhost/@@preferences/')
+    >>> user.getLink('Portal preferences').click()
+    >>> print user.contents
+    <html>
+    ...
+    <option id="portal-contenteditor-widgets-editor-0"
+            value="default">Basic HTML textarea editor</option>
+    <option id="portal-contenteditor-widgets-editor-1"
+            value="extjs">ExtJS editor</option>
+    ...
+    </html>
+
+    >>> user.getControl('Content editor').value = ['extjs']
+    >>> user.getControl('Save').click()
+
+Let's edit content, editor includes js to head and includes extjs.js
+
+    >>> user.open('http://localhost/page/context.html')
+    >>> print user.contents
+    <html>
+    ...
+    <script type="text/javascript" src="http://localhost/.../jquery.js"></script>
+    <script type="text/javascript" src="http://localhost/.../extjs.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://localhost/.../extjs.css" />
+    <script type="text/javascript" src="http://localhost/.../extjs-widgets.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://localhost/.../extjs-widgets.css" />
+    <script type="text/javascript">
+    Ext.EventManager.onDocumentReady(function(){
+       Ext.QuickTips.init();
+       var htmlEditor = new Ext.ux.HTMLEditor({
+          width: 600, height: 300, applyTo: 'form-widgets-text',
+          enableLinks: false,
+          plugins: [new Ext.ux.HTMLEditorLink(),
+          new Ext.ux.HTMLEditorImage('http://localhost/@@content.attachments/.../imageManagerAPI/', 'http://localhost/@@content.attachments/.../imageManagerAPI/'),
+          new Ext.ux.HTMLEditorMedia('http://localhost/@@content.attachments/.../mediaManagerAPI/', 'http://localhost/@@content.attachments/.../mediaManagerAPI/')]})
+       });
+    </script>
+    ...
+    <div class="z-form-fieldset">
+       <div class="z-form-field">
+          <label for="form-widgets-text" title="Page body text.">Body</label>
+          <span class="z-form-fieldRequired">&nbsp;</span>
+          <div class="z-form-help">Page body text.</div>
+          <div><div><textarea id="form-widgets-text" name="form.widgets.text" class="widget-extjs-richtext required richtext-field"
+            style="height: 300px; width: 600px"></textarea></div></div>
+       </div>
+    </div>
+    ...
+    </html>
+
+    >>> user.getControl('Body').value = u'<div>Test page</div>'
+    >>> user.getControl(name="content.edit.buttons.save").click()
+
+    >>> print root['page'].text.cooked
+    <div>Test page</div>
+
+Check display widget
+
+    >>> user.open('http://localhost/page')
+    >>> print user.contents
+    <html>
+    ...
+    ...<div class="z-form-field">
+      <label for="form-widgets-text" title="Page body text.">Body</label>
+      <div><span id="form-widgets-text"
+          class="widget-extjs-richtext required richtext-field">
+      <div>Test page</div>
+    </span>
+    </div>
+    ...
+    </html>
+
+Copy on save
+------------
+we try store all image inside document for better consistency
+
+Let's create image in homefolder
+
+    >>> user.open('http://localhost/people/user/context.html/attachments/')
+    >>> user.getLink('Image').click()
+
+    >>> fileControl = user.getControl('Attachment').mech_control
+    >>> fileControl.add_file(open(getPath('image.jpg')), filename='image.jpg')
+    >>> user.getControl('Content short name').value = 'image'
+    >>> user.getControl(name="content.add.buttons.add").click()
+
+    >>> from zojax.content.attachment.interfaces import IAttachmentsExtension
+
+    >>> ext = IAttachmentsExtension(root['people']['user'])
+
+    >>> imageid = root['ids'].getId(ext['image'])
+
+now we include image to text
+
+    >>> user.open('http://localhost/page/context.html/attachments/')
+    >>> print user.contents
+    <html>
+    ...
+    <div class="z-table-emtpy">There are no items in this container.</div>
+    ...
+    </html>
+
+    >>> user.open('http://localhost/page/context.html')
+    >>> user.getControl('Body').value = u'<div>Test page</div>'\
+    ...      '<img src="@@content.attachment/%s" />'%imageid
+    >>> user.getControl(name="content.edit.buttons.save").click()
+
+let's check result text
+
+    >>> print root['page'].text.cooked
+    <div>Test page</div><img src="@@content.attachment/..." />
+
+    >>> root['page'].text.cooked == '<div>Test page</div><img src="@@content.attachment/%s" />'%imageid
+    False
+
+    >>> ext = IAttachmentsExtension(root['page'])
+    >>> newimage = root['ids'].getId(ext['image'])
+
+    >>> root['page'].text.cooked == '<div>Test page</div><img src="@@content.attachment/%s" />'%newimage
+    True
+
+    >>> setSite(None)
