@@ -1,0 +1,58 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:z3c="http://namespaces.zope.org/z3c"
+   xmlns:zojax="http://namespaces.zope.org/zojax">
+
+  <!-- content editor -->
+  <utility
+     name="extjs"
+     factory=".widget.ExtjsWidgetFactory" />
+
+  <!-- display -->
+  <z3c:widgetTemplate
+     mode="display"
+     widget=".widget.ExtJSEditorWidget"
+     layer="z3c.form.interfaces.IFormLayer"
+     template="widget_display.pt" />
+
+  <!-- copy attachments on save -->
+  <subscriber handler=".copy.CopyAttachments" />
+
+  <!-- resources -->
+  <zojax:resourcedirectory
+     name="extjs-editor"
+     directory="resources"
+     mapping=".css:zrt" />
+
+  <zojax:resourcepackage
+     type="javascript"
+     name="extjs-widgets.js"
+     title="ExtJS Widgets (Java)"
+     cache="dynamic"
+     library="extjs-widgets"
+     require="extjs jquery-plugins">
+    <resource path="extjs-editor/fileuploadbutton.js" />
+    <resource path="extjs-editor/fileuploadfield.js" />
+    <resource path="extjs-editor/htmleditor.js" />
+    <resource path="extjs-editor/htmleditorimage.js" />
+    <resource path="extjs-editor/imagebrowser.js" />
+    <resource path="extjs-editor/htmleditormedia.js" />
+    <resource path="extjs-editor/mediabrowser.js" />
+    <resource path="extjs-editor/htmleditorlink.js" />
+    <resource path="extjs-editor/loadingindicator.js" />
+    <resource path="extjs-editor/statictextfield.js" />
+  </zojax:resourcepackage>
+
+  <zojax:resourcepackage
+     type="stylesheet"
+     name="extjs-widgets.css"
+     title="ExtJS Widgets (Styles)"
+     cache="dynamic"
+     library="extjs-widgets"
+     require="extjs">
+
+    <resource path="extjs-editor/styles.css" />
+    <resource path="extjs-editor/file-upload.css" />
+  </zojax:resourcepackage>
+
+</configure>

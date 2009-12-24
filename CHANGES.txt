@@ -1,0 +1,76 @@
+=======
+CHANGES
+=======
+
+0.4.1 (2009-11-30)
+------------------
+
+- Fixed js library deps
+
+- Added checks for permission to add attachments
+
+
+0.4.0 (2009-11-23)
+------------------
+
+- Insert link pugin added instead of basic insert link functionality
+
+- Fixed media plugin bug, fixed autoplay issue
+
+
+0.3.6 (2009-10-21)
+------------------
+
+- Fix tests and added tests for display widget
+
+
+0.3.5 (2009-07-14)
+------------------
+
+- Check for interaction before get request from it
+
+- Update tests for chameleon enabled setup
+
+
+0.3.4 (2009-06-25)
+------------------
+
+- Copyright changed to 'Zope Foundation and Contributors'
+
+
+0.3.3 (2009-05-25)
+------------------
+
+- Change width of editor to 600px
+
+
+0.3.2 (2009-04-07)
+------------------
+
+- Fixed empty editor widget
+
+- Do not use z3c.autoinclude
+
+
+0.3.1 (2009-04-03)
+------------------
+
+- Fixed required field validation
+
+
+0.3.0 (2009-04-01)
+------------------
+
+- Fixed Safari js errors
+
+
+0.2.0 (2009-03-30)
+------------------
+
+- Fixed IE js errors
+
+
+0.1.0 (2009-03-15)
+------------------
+
+- Initial release

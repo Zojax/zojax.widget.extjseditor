@@ -1,0 +1,187 @@
+/* zrt-cssregistry: */
+
+@media all {
+
+  .x-panel ul,
+  .x-window ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .x-window .x-panel-body {
+    background-color: #D0DEF0;
+  }
+
+  .x-panel ul li,
+  .x-window ul li {
+    margin-bottom: 0;
+  }
+
+  .z-widgets-insertimage .x-btn-text {
+    width: 16px;
+    background-image: url(extjs-editor/image.png);
+  }
+
+  .x-html-editor-tb .x-edit-image .x-btn-text {
+    width: 16px;
+    background: transparent url(extjs-editor/image.png) no-repeat;
+  }
+  .x-form-check-wrap {
+    margin-top: 3px;
+  }
+
+  /* image browser */
+  .z-img-chooser-view {
+    background: white;
+    font-size: 80%;
+  }
+  .z-img-browser-addimage {
+    background-image: url(extjs-editor/image_add.png) !important;
+  }
+  .z-img-browser-deleteimage {
+    background-image: url(extjs-editor/image_delete.png) !important;
+  }
+  .z-img-browser-view .thumb {
+    position: relative;
+    background: white;
+    border: 1px solid #dddddd;
+    width: 90px;
+    height: 90px;
+  }
+  .z-img-browser-view .thumb img {
+    position: absolute;
+  }
+  .z-img-browser-view .thumb-wrap {
+    float: left;
+    margin: 4px;
+    margin-right: 0;
+    padding: 5px;
+  }
+  .z-img-browser-view .thumb-wrap span {
+    display: block;
+    overflow: hidden;
+    text-align: center;
+  }
+  .z-img-browser-view .x-view-over {
+    border: 1px solid #dddddd;
+    background: #efefef url('../@@/extjs/images/default/grid/row-over.gif') repeat-x left top;
+    padding: 4px;
+  }
+  .z-img-browser-view .x-view-selected {
+    background: #DFEDFF;
+    border: 1px solid #6593cf;
+    padding: 4px;
+  }
+  .z-img-browser-view .x-view-selected .thumb {
+    background: transparent;
+  }
+  .z-img-browser-view .x-view-selected span {
+    color: #1A4D8F;
+  }
+  .z-img-browser-view .loading-indicator {
+    font-size: 11px;
+    background-image: url('../@@/extjs/images/grid/loading.gif');
+    background-repeat: no-repeat;
+    background-position: left;
+    padding-left: 20px;
+    margin: 10px;
+  }
+
+  /* media browser */
+  .z-media-chooser-view {
+    background: white;
+    font-size: 80%;
+  }
+  .z-media-browser-addmedia {
+    background-image: url(extjs-editor/media_add.png) !important;
+  }
+  .z-media-browser-deletemedia {
+    background-image: url(extjs-editor/media_delete.png) !important;
+  }
+  .z-media-browser-view .thumb {
+    position: relative;
+    background: white;
+    border: 1px solid #dddddd;
+    width: 90px;
+    height: 90px;
+  }
+  .z-media-browser-view .thumb img {
+    position: absolute;
+  }
+  .z-media-browser-view .thumb-wrap {
+    float: left;
+    margin: 4px;
+    margin-right: 0;
+    padding: 5px;
+  }
+  .z-media-browser-view .thumb-wrap span {
+    display: block;
+    overflow: hidden;
+    text-align: center;
+  }
+  .z-media-browser-view .x-view-over {
+    border: 1px solid #dddddd;
+    background: #efefef url('../@@/extjs/images/default/grid/row-over.gif') repeat-x left top;
+    padding: 4px;
+  }
+  .z-media-browser-view .x-view-selected {
+    background: #DFEDFF;
+    border: 1px solid #6593cf;
+    padding: 4px;
+  }
+  .z-media-browser-view .x-view-selected .thumb {
+    background: transparent;
+  }
+  .z-media-browser-view .x-view-selected span {
+    color: #1A4D8F;
+  }
+  .z-media-browser-view .loading-indicator {
+    font-size: 11px;
+    background-image: url('../@@/extjs/images/grid/loading.gif');
+    background-repeat: no-repeat;
+    background-position: left;
+    padding-left: 20px;
+    margin: 10px;
+  }
+
+  .inline-thumb-wrap {
+    float: left;
+    margin: 4px;
+    margin-right: 0;
+    padding: 5px;
+    display: block;
+    border: 1px;
+  }
+
+  /* loading indicator */
+  .x-tbar-loading {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* static text field */
+  .ux-form-statictextfield {
+  background: transparent;
+  border: none;
+  padding-top: 3px !important;
+  padding-bottom: 1px !important;
+  color: #333;
+  }
+
+  .z-widgets-insertmedia .x-btn-text {
+    width: 16px;
+    background-image: url(extjs-editor/media.png);
+  }
+
+  .x-html-editor-tb .x-edit-media .x-btn-text {
+    width: 16px;
+    background: transparent url(extjs-editor/media.png) no-repeat;
+  }
+
+  .x-html-editor-tb .x-edit-link .x-btn-text {
+    width: 16px;
+    background: transparent url(extjs-editor/link.png) no-repeat;
+  }
+
+}
