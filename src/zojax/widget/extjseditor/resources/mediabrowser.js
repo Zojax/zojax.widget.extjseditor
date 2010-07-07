@@ -98,7 +98,7 @@ Ext.ux.MediaBrowser = function(config) {
         title: 'Media Upload Form',
         autoHeight: true,
         bodyStyle: 'padding: 10px 10px 0 10px;',
-        labelWidth: 50,
+        labelWidth: 80,
         defaults: {
             anchor: '95%',
             allowBlank: false,
