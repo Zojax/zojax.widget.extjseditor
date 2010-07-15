@@ -349,7 +349,7 @@ Ext.ux.HTMLEditorMedia = function(url1, url2) {
     closable: true,
           modal: true,
     closeAction: 'hide',
-    width: 460,
+    width: 500,
     height: 350,
     plain: true,
     layout: 'fit',

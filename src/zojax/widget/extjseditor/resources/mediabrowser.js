@@ -77,6 +77,8 @@ Ext.ux.MediaBrowser = function(config) {
   if (response.success == 'true') {
       frm.reset();
       this.reset();
+      view.refresh();
+      view.select(response.file);
       uploadwin.hide();
   } else {
       Ext.MessageBox.alert("Upload Error", response.message + ' ' + response.success);
@@ -208,7 +210,7 @@ Ext.ux.MediaBrowser = function(config) {
     var thumbTemplate = new Ext.XTemplate(
   '<tpl for=".">',
   '<div class="thumb-wrap" id="{name}">',
-  '<div class="thumb"><img src="{preview}" ext:qtip="{tip}" style="top:{thumbtop}; left:{thumbleft}" /></div>',
+  '<div class="thumb" ext:qtip="{tip}"><img src="{preview}" style="top:{thumbtop}; left:{thumbleft}" /></div>',
   '<span>{label}</span>',
   '</div>',
   '</tpl>'
@@ -221,6 +223,7 @@ Ext.ux.MediaBrowser = function(config) {
   root: 'medias',
   fields: [
            'id', 'name', 'title','description','type', 'autoplay',
+           'modified',
       {name: 'width', type: 'float'},
       {name: 'height', type: 'float'},
       {name: 'size', type: 'float'},
@@ -228,7 +231,7 @@ Ext.ux.MediaBrowser = function(config) {
   ],
   listeners: {
       'beforeload': {fn: indicatorOn, scope: this},
-      'load': {fn: indicatorOff, scope: this},
+      'load': {fn: function() {indicatorOff(); sortImages()}, scope: this},
       'loadexception': {fn: indicatorOff, scope: this}
   }
     });
@@ -284,6 +287,11 @@ Ext.ux.MediaBrowser = function(config) {
   var filter = Ext.getCmp('filter');
   view.store.filter('name', filter.getValue());
     };
+    
+    var sortImages = function(){
+        var v = Ext.getCmp('sortSelect').getValue();
+        view.store.sort(v, v == 'title' ? 'asc' : 'desc');
+    }
 
     // apply additional config values
     Ext.applyIf(config, {
@@ -308,6 +316,29 @@ Ext.ux.MediaBrowser = function(config) {
                }, scope: this}
            }
        }, ' ', '-', {
+           text: 'Sort By:'
+       }, {
+           id: 'sortSelect',
+           xtype: 'combo',
+           typeAhead: true,
+           triggerAction: 'all',
+           width: 100,
+           editable: false,
+           mode: 'local',
+           displayField: 'desc',
+           valueField: 'name',
+           lazyInit: false,
+           value: 'modified',
+           store: new Ext.data.SimpleStore({
+               fields: ['name', 'desc'],
+               data : [['title', 'Title'],
+                       ['size', 'File Size'],
+                       ['modified', 'Last Modified']]
+           }),
+           listeners: {
+               'select': {fn:function(){sortImages()}, scope:this}
+           }
+       },' ', '-', {
            xtype: 'button',
            iconCls: 'z-media-browser-addmedia',
            text: 'Upload',

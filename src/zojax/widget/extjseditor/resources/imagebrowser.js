@@ -75,6 +75,9 @@ Ext.ux.ImageBrowser = function(config) {
 	response = Ext.util.JSON.decode(cleaned);
 	if (response.success == 'true') {
 	    this.reset();
+	    view.refresh();
+	    alert(response.file);
+	    view.select(response.file);
 	} else {
 	    Ext.MessageBox.alert("Upload Error", response.message);
 	}
@@ -141,7 +144,7 @@ Ext.ux.ImageBrowser = function(config) {
 	url: config.listURL + '?pw=80&ph=80',
 	root: 'images',
 	fields: [
-	    'id', 'name', 'title',
+	    'id', 'name', 'title', 'modified',
 	    {name: 'width', type: 'float'},
 	    {name: 'height', type: 'float'},
 	    {name: 'size', type: 'float'},
@@ -149,7 +152,7 @@ Ext.ux.ImageBrowser = function(config) {
 	],
 	listeners: {
 	    'beforeload': {fn: indicatorOn, scope: this},
-	    'load': {fn: indicatorOff, scope: this},
+	    'load': {fn: function() {indicatorOff(); sortImages()}, scope: this},
 	    'loadexception': {fn: indicatorOff, scope: this}
 	}
     });
@@ -206,6 +209,11 @@ Ext.ux.ImageBrowser = function(config) {
 	view.store.filter('name', filter.getValue());
     };
     
+    var sortImages = function(){
+        var v = Ext.getCmp('sortSelect').getValue();
+        view.store.sort(v, v == 'title' ? 'asc' : 'desc');
+    }
+    
     // apply additional config values
     Ext.applyIf(config, {
 	layout: 'fit',
@@ -229,6 +237,29 @@ Ext.ux.ImageBrowser = function(config) {
       			   }, scope: this}
 		       }
 		   }, ' ', '-', {
+	           text: 'Sort By:'
+	       }, {
+	           id: 'sortSelect',
+	           xtype: 'combo',
+	           typeAhead: true,
+	           triggerAction: 'all',
+	           width: 100,
+	           editable: false,
+	           mode: 'local',
+	           displayField: 'desc',
+	           valueField: 'name',
+	           lazyInit: false,
+	           value: 'modified',
+	           store: new Ext.data.SimpleStore({
+	               fields: ['name', 'desc'],
+	               data : [['title', 'Title'],
+	                       ['size', 'File Size'],
+	                       ['modified', 'Last Modified']]
+	           }),
+	           listeners: {
+	               'select': {fn:function(){sortImages()}, scope:this}
+	           }
+	       }, ' ', '-', {
 		       xtype: 'fileuploadbutton',
 		       iconCls: 'z-img-browser-addimage',
 		       text: 'Upload',
