@@ -76,7 +76,6 @@ Ext.ux.ImageBrowser = function(config) {
 	if (response.success == 'true') {
 	    this.reset();
 	    view.refresh();
-	    alert(response.file);
 	    view.select(response.file);
 	} else {
 	    Ext.MessageBox.alert("Upload Error", response.message);
