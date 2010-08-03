@@ -55,4 +55,12 @@
     <resource path="extjs-editor/file-upload.css" />
   </zojax:resourcepackage>
 
+  <!-- configlet -->
+  <zojax:configlet
+     name="system.contenteditor.extjs"
+     title="Ext Js Editor"
+     description="Ext Js editor configuration."
+     schema=".interfaces.IExtJsEditor"
+     class=".configlet.ExtJsConfiglet" />
+
 </configure>

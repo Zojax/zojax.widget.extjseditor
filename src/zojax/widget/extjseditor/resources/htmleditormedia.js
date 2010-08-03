@@ -1,6 +1,6 @@
 // Ext.ux.HTMLEditorMedia
 // a plugin to handle medias in the Ext.ux.HtmlEditor
-Ext.ux.HTMLEditorMedia = function(url1, url2) {
+Ext.ux.HTMLEditorMedia = function(url1, url2, mediaAPIUrl) {
 
     // pointer to Ext.ux.HTMLEditor
     var editor;
@@ -8,6 +8,7 @@ Ext.ux.HTMLEditorMedia = function(url1, url2) {
     // base urls
     var baseUrl1 = url1;
     var baseUrl2 = url2;
+    var mediaAPIUrl = mediaAPIUrl;
 
     // pointer to Ext.Window
     var win;
@@ -18,6 +19,7 @@ Ext.ux.HTMLEditorMedia = function(url1, url2) {
     // pointer to Ext.ux.MediaBrowser
     var mediaBrowserSite;
     var mediaBrowserDocument;
+    var mediaBrowserAPI;
 
     // other private variables
     var constrained = false;
@@ -302,7 +304,7 @@ Ext.ux.HTMLEditorMedia = function(url1, url2) {
               frame: false,
               border: false,
               autoWidth: true,
-              title: 'My medias',
+              title: 'My media',
 
               // medias api
               listURL: baseUrl2 + 'listing',
@@ -319,7 +321,7 @@ Ext.ux.HTMLEditorMedia = function(url1, url2) {
               frame: false,
               border: false,
               autoWidth: true,
-              title: 'Document medias',
+              title: 'Document media',
 
               // medias api
               listURL: baseUrl1 + 'listing',
@@ -330,10 +332,25 @@ Ext.ux.HTMLEditorMedia = function(url1, url2) {
               callback: setMediaDetails
     });
       }
+      
+      if (mediaAPIUrl) {
+          mediaBrowserAPI = new Ext.ux.MediaBrowser({
+                    frame: false,
+                    border: false,
+                    autoWidth: true,
+                    title: 'External media',
+
+                    // medias api
+                    apiURL: mediaAPIUrl,
+                    // set the callback from the media browser
+                    callback: setMediaDetails
+          });
+      }
 
       var items = [];
       if (mediaBrowserSite) {items[items.length] = mediaBrowserSite;}
       if (mediaBrowserDocument) {items[items.length] = mediaBrowserDocument;}
+      if (mediaBrowserAPI) {items[items.length] = mediaBrowserAPI;}
       items[items.length] = mediaUrl;
 
       var tabs = new Ext.TabPanel({

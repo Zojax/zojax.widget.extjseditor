@@ -18,14 +18,14 @@ Ext.ux.MediaBrowser = function(config) {
 
     // turn indicator on to indicate media list is loading
     var indicatorOn = function() {
-  if (Ext.getCmp(myid)) {
+  if (Ext.getCmp(myid) && Ext.getCmp(myid).getTopToolbar().items) {
       Ext.getCmp(myid).getTopToolbar().items.map.indicator.disable();
     }
     };
 
     // turn indicator off
     var indicatorOff = function() {
-  if (Ext.getCmp(myid)) {
+  if (Ext.getCmp(myid) && Ext.getCmp(myid).getTopToolbar().items) {
       Ext.getCmp(myid).getTopToolbar().items.map.indicator.enable();
     }
     };
@@ -60,7 +60,7 @@ Ext.ux.MediaBrowser = function(config) {
   data.thumbtop = "5px";
   data.thumbwidth = Math.round(data.thumbwidth) + "px";
   data.thumbheight = Math.round(data.thumbheight) + "px";
-    lookup[data.name] = data;
+  lookup[data.name] = data;
     return data;
     };
 
@@ -210,7 +210,7 @@ Ext.ux.MediaBrowser = function(config) {
     var thumbTemplate = new Ext.XTemplate(
   '<tpl for=".">',
   '<div class="thumb-wrap" id="{name}">',
-  '<div class="thumb" ext:qtip="{tip}"><img src="{preview}" style="top:{thumbtop}; left:{thumbleft}" /></div>',
+  '<div class="thumb" ext:qtip="{tip}"><img src="{preview}" style="top:{thumbtop}; left:{thumbleft}; width:{thumbwidth}; height:{thumbheight}" /></div>',
   '<span>{label}</span>',
   '</div>',
   '</tpl>'
@@ -218,23 +218,49 @@ Ext.ux.MediaBrowser = function(config) {
     thumbTemplate.compile();
 
     // create json store for loading media data
-    var store = new Ext.data.JsonStore({
-  url: config.listURL + '?pw=80&ph=80',
-  root: 'medias',
-  fields: [
-           'id', 'name', 'title','description','type', 'autoplay',
-           'modified',
-      {name: 'width', type: 'float'},
-      {name: 'height', type: 'float'},
-      {name: 'size', type: 'float'},
-      'url', 'preview'
-  ],
-  listeners: {
-      'beforeload': {fn: indicatorOn, scope: this},
-      'load': {fn: function() {indicatorOff(); sortImages()}, scope: this},
-      'loadexception': {fn: indicatorOff, scope: this}
-  }
-    });
+    var store;
+    if (config.listURL) {
+     store = new Ext.data.JsonStore({
+      url: config.listURL + '?pw=80&ph=80',
+      root: 'medias',
+      fields: [
+               'id', 'name', 'title','description','type', 'autoplay',
+               'modified',
+          {name: 'width', type: 'float', defaultValue: 320},
+          {name: 'height', type: 'float', defaultValue: 240},
+          {name: 'size', type: 'float'},
+          'url', 'preview'
+      ],
+      listeners: {
+          'beforeload': {fn: indicatorOn, scope: this},
+          'load': {fn: function() {indicatorOff(); sortImages()}, scope: this},
+          'loadexception': {fn: indicatorOff, scope: this}
+      }
+        });
+    }
+    else {
+        store = new Ext.data.JsonStore({
+            url: config.apiURL + 'browseFiles.php',
+            root: 'images',
+            fields: [
+                     {name:'id', mapping:'name'}, 
+                     'name', {name:'title', mapping:'name'},
+                     {name:'description', mapping:'name'},
+                     {name:'type', defaultValue:'flv'},
+                     {name:'autoplay', defaultValue: false},
+                     {name:'modified', mapping:'lastmod'},
+                {name: 'width', type: 'float', defaultValue: 320},
+                {name: 'height', type: 'float', defaultValue: 240},
+                {name: 'size', type: 'float'},
+                {name:'url', mapping:'flv'}, {name:'preview', mapping:'url'}
+            ],
+            listeners: {
+                'beforeload': {fn: indicatorOn, scope: this},
+                'load': {fn: function() {indicatorOff(); sortImages()}, scope: this},
+                'loadexception': {fn: indicatorOff, scope: this}
+            }
+              });
+    }
     store.load();
 
     // called when media selection is changed
@@ -338,7 +364,7 @@ Ext.ux.MediaBrowser = function(config) {
            listeners: {
                'select': {fn:function(){sortImages()}, scope:this}
            }
-       },' ', '-', {
+       }, ' ', '-'].concat((config.uploadURL ? [{
            xtype: 'button',
            iconCls: 'z-media-browser-addmedia',
            text: 'Upload',
@@ -349,11 +375,11 @@ Ext.ux.MediaBrowser = function(config) {
            text:'Delete',
            handler: confirmDelete,
            scope: this
-       }, '->', {
+       }] : []),['->', {
            xtype: 'tbindicator',
            id: indicatorId
-       }, ' ']
-  }]
+       }, ' '])
+   }]
     });
 
     // call Ext.Window constructor passing config

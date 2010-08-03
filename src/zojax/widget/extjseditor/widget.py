@@ -33,6 +33,7 @@ from zojax.richtext.field import RichTextData
 from zojax.richtext.interfaces import IRichTextData
 from zojax.richtext.interfaces import IRichTextWidget, IRichTextWidgetFactory
 
+from interfaces import IExtJsEditor
 
 jssource = """<script type="text/javascript">
 Ext.EventManager.onDocumentReady(function(){
@@ -42,7 +43,7 @@ Ext.EventManager.onDocumentReady(function(){
       enableLinks: false,
       plugins: [new Ext.ux.HTMLEditorLink(),
       new Ext.ux.HTMLEditorImage('%(url1)s', '%(url2)s'),
-      new Ext.ux.HTMLEditorMedia('%(mediaUrl1)s', '%(mediaUrl2)s')]})
+      new Ext.ux.HTMLEditorMedia('%(mediaUrl1)s', '%(mediaUrl2)s', '%(mediaAPIUrl)s')]})
    });
 </script>"""
 
@@ -94,6 +95,7 @@ class ExtJSEditorWidget(textarea.TextAreaWidget):
                 'url2': url2,
                 'mediaUrl1': mediaUrl1,
                 'mediaUrl2': mediaUrl2,
+                'mediaAPIUrl': getUtility(IExtJsEditor).mediaAPIURL or ''
                 }, ('extjs-widgets',))
 
         html = """<div><textarea id="%(id)s" name="%(name)s" class="%(klass)s"
