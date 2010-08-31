@@ -1,15 +1,21 @@
 // Ext.ux.HTMLEditorMedia
 // a plugin to handle medias in the Ext.ux.HtmlEditor
-Ext.ux.HTMLEditorMedia = function(url1, url2, mediaAPIUrl) {
+Ext.ux.HTMLEditorMedia = function(config) {
 
     // pointer to Ext.ux.HTMLEditor
     var editor;
 
     // base urls
-    var baseUrl1 = url1;
-    var baseUrl2 = url2;
-    var mediaAPIUrl = mediaAPIUrl;
-
+    var baseUrl1 = config.mediaUrl1;
+    var baseUrl2 = config.mediaUrl2;
+    var mediaAPIUrl = config.mediaAPIUrl;
+    var kalturaApiURL = config.kalturaApiURL;
+    var kalturaPartnerId = config.kalturaPartnerId;
+    var kalturaUserSecret = config.kalturaUserSecret;
+    var kalturaAdminSecret = config.kalturaAdminSecret;
+    var kalturaUserId = config.kalturaUserId;
+    var kalturaKs = config.kalturaKs;
+    
     // pointer to Ext.Window
     var win;
 
@@ -20,6 +26,7 @@ Ext.ux.HTMLEditorMedia = function(url1, url2, mediaAPIUrl) {
     var mediaBrowserSite;
     var mediaBrowserDocument;
     var mediaBrowserAPI;
+    var mediaBrowserKaltura;
 
     // other private variables
     var constrained = false;
@@ -347,10 +354,30 @@ Ext.ux.HTMLEditorMedia = function(url1, url2, mediaAPIUrl) {
           });
       }
 
+      if (kalturaPartnerId && kalturaAdminSecret) {
+          mediaBrowserKaltura = new Ext.ux.MediaBrowser({
+                    frame: false,
+                    border: false,
+                    autoWidth: true,
+                    title: 'Kaltura media',
+
+                    // kaltura settings
+                    kalturaPartnerId: kalturaPartnerId,
+                    kalturaAdminSecret: kalturaAdminSecret,
+                    kalturaUserSecret: kalturaUserSecret,
+                    kalturaApiURL: kalturaApiURL,
+                    kalturaKs: kalturaKs,
+                    kalturaUserId: kalturaUserId,
+                    // set the callback from the media browser
+                    callback: setMediaDetails
+          });
+      }
+      
       var items = [];
       if (mediaBrowserSite) {items[items.length] = mediaBrowserSite;}
       if (mediaBrowserDocument) {items[items.length] = mediaBrowserDocument;}
       if (mediaBrowserAPI) {items[items.length] = mediaBrowserAPI;}
+      if (mediaBrowserKaltura) {items[items.length] = mediaBrowserKaltura;}
       items[items.length] = mediaUrl;
 
       var tabs = new Ext.TabPanel({

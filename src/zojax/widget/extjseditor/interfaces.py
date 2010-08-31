@@ -18,6 +18,8 @@ $Id$
 from zope import schema, interface
 from zope.i18nmessageid import MessageFactory
 
+from z3c.schema.baseurl.field import BaseURL
+
 _ = MessageFactory('zojax.widget.extjseditor')
 
 
@@ -26,3 +28,20 @@ class IExtJsEditor(interface.Interface):
 
     mediaAPIURL = schema.TextLine(title=_('Media API URL'),
                                   required=False,)
+
+    kalturaPartnerId = schema.TextLine(title=_('Kaltura Partner Id'),
+                                  required=False,)
+
+    kalturaUserSecret = schema.TextLine(title=_('Kaltura User Secret'),
+                                  required=False,)
+
+    kalturaAdminSecret = schema.TextLine(title=_('Kaltura Admin Secret'),
+                                  required=False,)
+
+    kalturaApiURL = BaseURL(title=_('Kaltura User Secret'),
+                            default = 'http://www.kaltura.com/api/',
+                            required=False,)
+
+    kalturaUserId = schema.TextLine(title=_('Kaltura User Id'),
+                            required=False,)
+

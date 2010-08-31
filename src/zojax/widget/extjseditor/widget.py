@@ -15,6 +15,7 @@
 
 $Id$
 """
+import simplejson
 from zope import interface
 from zope.proxy import removeAllProxies
 from zope.security import checkPermission
@@ -38,13 +39,13 @@ from interfaces import IExtJsEditor
 jssource = """<script type="text/javascript">
 Ext.EventManager.onDocumentReady(function(){
    Ext.QuickTips.init();
-   var htmlEditor = new Ext.ux.HTMLEditor({
-      width: %(width)s, height: %(height)s, applyTo: '%(id)s',
-      enableLinks: false,
-      plugins: [new Ext.ux.HTMLEditorLink(),
-      new Ext.ux.HTMLEditorImage('%(url1)s', '%(url2)s'),
-      new Ext.ux.HTMLEditorMedia('%(mediaUrl1)s', '%(mediaUrl2)s', '%(mediaAPIUrl)s')]})
-   });
+    var htmlEditor = new Ext.ux.HTMLEditor({
+       width: %(width)s, height: %(height)s, applyTo: '%(id)s',
+       enableLinks: false,
+       plugins: [new Ext.ux.HTMLEditorLink(),
+       new Ext.ux.HTMLEditorImage('%(url1)s', '%(url2)s'),
+       new Ext.ux.HTMLEditorMedia(%(mediaConfig)s)]})
+    });
 </script>"""
 
 
@@ -87,15 +88,22 @@ class ExtJSEditorWidget(textarea.TextAreaWidget):
             mediaUrl2 = '%s/@@content.attachments/%s/mediaManagerAPI/'%(
                 siteUrl, ids.getId(space))
 
+        configlet = getUtility(IExtJsEditor)
+        includeInplaceSource('<script type="text/javascript" src="http://apis.kaltura.org/kalturaJsClient/kaltura.min.js.php"></script>', ('extjs-widgets',))
         includeInplaceSource(jssource%{
                 'id': self.id,
                 'width': repr(self.style_width),
                 'height': repr(self.style_height),
                 'url1': url1,
                 'url2': url2,
-                'mediaUrl1': mediaUrl1,
-                'mediaUrl2': mediaUrl2,
-                'mediaAPIUrl': getUtility(IExtJsEditor).mediaAPIURL or ''
+                'mediaConfig': simplejson.dumps(dict(mediaUrl1=mediaUrl1,
+                                                     mediaUrl2=mediaUrl2,
+                                                     mediaAPIUrl=configlet.mediaAPIURL,
+                                                     kalturaPartnerId=configlet.kalturaPartnerId,
+                                                     kalturaUserSecret=configlet.kalturaUserSecret,
+                                                     kalturaAdminSecret=configlet.kalturaAdminSecret,
+                                                     kalturaApiURL=configlet.kalturaApiURL
+                                                     )),
                 }, ('extjs-widgets',))
 
         html = """<div><textarea id="%(id)s" name="%(name)s" class="%(klass)s"

@@ -1,5 +1,87 @@
 // Ext.ux.MediaBrowser
 // an media browser for the Ext.ux.HtmlEditorMedia plugin
+
+KalturaProxy = function (conn)
+           {
+                KalturaProxy.superclass.constructor.call(this);
+                Ext.apply(this, conn);
+           };
+
+Ext.extend(KalturaProxy, Ext.data.DataProxy, 
+{
+
+     ensureSession: function (callback)
+     {
+        var proxyWrapper = this;
+        if (proxyWrapper.kConfig && proxyWrapper.kConfig.ks)
+            return callback();
+        
+        function startSession(){
+            proxyWrapper.kConfig = new KalturaConfiguration(parseInt(proxyWrapper.partnerId));
+            proxyWrapper.kClient = new KalturaClient(proxyWrapper.kConfig);
+            proxyWrapper.kClient.session.start(sessionStarted, proxyWrapper.secret, proxyWrapper.kalturaUserId, proxyWrapper.sessionType);
+        }
+        function sessionStarted(success, data) {
+            proxyWrapper.kClient.setKs(data);
+            return callback()
+        }
+        startSession();
+
+     },
+    
+     load : function (params, reader, callback, scope, arg)
+            {
+               var userContext = {
+                                    callback: callback, 
+                                    reader: reader, 
+                                    arg: arg, 
+                                    scope: scope
+                                 };
+               var proxyWrapper = this;
+
+               var kalturaCallback = function(success, data) 
+                { 
+                   if (!success)
+                       return proxyWrapper.handleErrorResponse(data, userContext)
+                   proxyWrapper.loadResponse(data, userContext); 
+                }
+                   
+               function listEntries(start, limit, filterKey, filterValue, orderBy, success, error) {
+                   var entryFilter = new KalturaBaseEntryFilter();
+                   if (filterKey && filterKey != '' && filterValue != '')
+                       entryFilter[filterKey] = filterValue;
+                   entryFilter.statusEqual = KalturaEntryStatus.READY;
+                   if (orderBy)
+                       entryFilter.orderBy = orderBy;
+                   entryFilter.typeIn = KalturaEntryType.MEDIA_CLIP;
+                   var kalturaPager = new KalturaFilterPager();
+                   if (limit) {
+                       kalturaPager.pageSize = limit;
+                       if (start)
+                           kalturaPager.pageIndex = start/limit + 1;
+                   }
+                   proxyWrapper.kClient.media.listAction(kalturaCallback, entryFilter, kalturaPager);
+               }
+               
+               this.ensureSession(function() {
+                   //Handles the response we get back from the web service call
+                   listEntries(params.start, params.limit, params.filterKey, params.filterValue, (params.dir == 'ASC') ? '':'-' + params.sort )
+               })
+            },
+            
+     handleErrorResponse : function(response, userContext, methodName)
+                           {
+                              alert("Error while calling web service method:" + methodName + "\n" + response.get_message());
+                           },
+ 
+     loadResponse : function (response, userContext, methodName)
+                    {
+                        var result = userContext.reader.readRecords(response);
+                        userContext.callback.call(userContext.scope, result, userContext.arg, true);
+                    }
+        
+}); 
+
 Ext.ux.MediaBrowser = function(config) {
 
     // PRIVATE
@@ -13,6 +95,7 @@ Ext.ux.MediaBrowser = function(config) {
     // this id
     var myid = Ext.id();
     var filterId = Ext.id();
+    var sortId = Ext.id();
     var indicatorId = Ext.id();
     var uploadwin;
 
@@ -223,6 +306,7 @@ Ext.ux.MediaBrowser = function(config) {
      store = new Ext.data.JsonStore({
       url: config.listURL + '?pw=80&ph=80',
       root: 'medias',
+      autoLoad: false,
       fields: [
                'id', 'name', 'title','description','type', 'autoplay',
                'modified',
@@ -237,11 +321,14 @@ Ext.ux.MediaBrowser = function(config) {
           'loadexception': {fn: indicatorOff, scope: this}
       }
         });
+     store.load();
+
     }
-    else {
+    else if (config.apiURL) {
         store = new Ext.data.JsonStore({
             url: config.apiURL + 'browseFiles.php',
             root: 'images',
+            autoLoad: false,
             fields: [
                      {name:'id', mapping:'name'}, 
                      'name', {name:'title', mapping:'name'},
@@ -260,8 +347,45 @@ Ext.ux.MediaBrowser = function(config) {
                 'loadexception': {fn: indicatorOff, scope: this}
             }
               });
+        store.load();
+
     }
-    store.load();
+    else if (config.kalturaPartnerId && config.kalturaAdminSecret) {
+        
+        store = new Ext.data.JsonStore({
+            proxy: new KalturaProxy({partnerId: config.kalturaPartnerId,
+                                 secret: config.kalturaAdminSecret,
+                                 sessionType: KalturaSessionType.ADMIN
+                                }),
+            idProperty: 'id',
+            root: 'objects',
+            autoLoad: false,
+            fields: ['id', 
+                     'name', 
+                     {name:'title', mapping:'name'},
+                     {name:'description', defaultValue:''},
+                     {name:'type', mapping:'dummy', defaultValue:'flv'},
+                     {name:'autoplay', defaultValue: false},
+                     {name:'modified', mapping:'lastmod'},
+                {name: 'width', type: 'float', defaultValue: 320},
+                {name: 'height', type: 'float', defaultValue: 240},
+                {name: 'size', type: 'float', mapping: 'duration'},
+                {name:'url', mapping:'dataUrl'}, {name:'preview', mapping:'thumbnailUrl'}
+            ],
+            listeners: {
+                'beforeload': {fn: indicatorOn, scope: this},
+                'load': {fn: function() {indicatorOff(); sortImages()}, scope: this},
+                'loadexception': {fn: indicatorOff, scope: this}
+            }
+              });
+        store.load({
+            params: {
+            // specify params for the first page load if using paging
+            start: 0,          
+            limit: 30
+        }
+    })
+    }
 
     // called when media selection is changed
     var selectionChanged = function() {
@@ -310,12 +434,19 @@ Ext.ux.MediaBrowser = function(config) {
 
     // create filter to easily search medias
     var filterView = function() {
-  var filter = Ext.getCmp('filter');
+  var filter = Ext.getCmp(filterId);
+  if (typeof view.store.proxy== 'object' && view.store.proxy.constructor == KalturaProxy) {
+      view.store.load({params:{filterKey:'searchTextMatchAnd', filterValue:filter.getValue(),
+                               start: 0,          
+                               limit: 30}});
+  }
+  else {
   view.store.filter('name', filter.getValue());
-    };
+  }  
+  };
     
     var sortImages = function(){
-        var v = Ext.getCmp('sortSelect').getValue();
+        var v = Ext.getCmp(sortId).getValue();
         view.store.sort(v, v == 'title' ? 'asc' : 'desc');
     }
 
@@ -344,7 +475,7 @@ Ext.ux.MediaBrowser = function(config) {
        }, ' ', '-', {
            text: 'Sort By:'
        }, {
-           id: 'sortSelect',
+           id: sortId,
            xtype: 'combo',
            typeAhead: true,
            triggerAction: 'all',
@@ -364,7 +495,12 @@ Ext.ux.MediaBrowser = function(config) {
            listeners: {
                'select': {fn:function(){sortImages()}, scope:this}
            }
-       }, ' ', '-'].concat((config.uploadURL ? [{
+       }, new Ext.PagingToolbar({
+           store: store,       // grid and PagingToolbar using same store
+           displayInfo: false,
+           pageSize: 30,
+           prependButtons: true,
+       }), ' ', '-'].concat((config.uploadURL ? [{
            xtype: 'button',
            iconCls: 'z-media-browser-addmedia',
            text: 'Upload',
