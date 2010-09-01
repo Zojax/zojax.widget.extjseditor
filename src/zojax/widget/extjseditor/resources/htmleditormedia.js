@@ -9,12 +9,6 @@ Ext.ux.HTMLEditorMedia = function(config) {
     var baseUrl1 = config.mediaUrl1;
     var baseUrl2 = config.mediaUrl2;
     var mediaAPIUrl = config.mediaAPIUrl;
-    var kalturaApiURL = config.kalturaApiURL;
-    var kalturaPartnerId = config.kalturaPartnerId;
-    var kalturaUserSecret = config.kalturaUserSecret;
-    var kalturaAdminSecret = config.kalturaAdminSecret;
-    var kalturaUserId = config.kalturaUserId;
-    var kalturaKs = config.kalturaKs;
     
     // pointer to Ext.Window
     var win;
@@ -354,7 +348,7 @@ Ext.ux.HTMLEditorMedia = function(config) {
           });
       }
 
-      if (kalturaPartnerId && kalturaAdminSecret) {
+      if (config.kaltura.partnerId && config.kaltura.adminSecret) {
           mediaBrowserKaltura = new Ext.ux.MediaBrowser({
                     frame: false,
                     border: false,
@@ -362,12 +356,7 @@ Ext.ux.HTMLEditorMedia = function(config) {
                     title: 'Kaltura media',
 
                     // kaltura settings
-                    kalturaPartnerId: kalturaPartnerId,
-                    kalturaAdminSecret: kalturaAdminSecret,
-                    kalturaUserSecret: kalturaUserSecret,
-                    kalturaApiURL: kalturaApiURL,
-                    kalturaKs: kalturaKs,
-                    kalturaUserId: kalturaUserId,
+                    kaltura: config.kaltura,
                     // set the callback from the media browser
                     callback: setMediaDetails
           });

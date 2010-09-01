@@ -99,10 +99,12 @@ class ExtJSEditorWidget(textarea.TextAreaWidget):
                 'mediaConfig': simplejson.dumps(dict(mediaUrl1=mediaUrl1,
                                                      mediaUrl2=mediaUrl2,
                                                      mediaAPIUrl=configlet.mediaAPIURL,
-                                                     kalturaPartnerId=configlet.kalturaPartnerId,
-                                                     kalturaUserSecret=configlet.kalturaUserSecret,
-                                                     kalturaAdminSecret=configlet.kalturaAdminSecret,
-                                                     kalturaApiURL=configlet.kalturaApiURL
+                                                     kaltura=dict(partnerId=configlet.kalturaPartnerId,
+                                                                  userSecret=configlet.kalturaUserSecret,
+                                                                  adminSecret=configlet.kalturaAdminSecret,
+                                                                  serviceUrl=configlet.kalturaServiceUrl,
+                                                                  serviceBase=configlet.kalturaServiceBase,
+                                                                  userId=configlet.kalturaUserId)
                                                      )),
                 }, ('extjs-widgets',))
 

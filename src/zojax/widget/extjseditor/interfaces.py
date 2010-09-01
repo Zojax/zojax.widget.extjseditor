@@ -38,8 +38,12 @@ class IExtJsEditor(interface.Interface):
     kalturaAdminSecret = schema.TextLine(title=_('Kaltura Admin Secret'),
                                   required=False,)
 
-    kalturaApiURL = BaseURL(title=_('Kaltura User Secret'),
-                            default = 'http://www.kaltura.com/api/',
+    kalturaServiceUrl = schema.TextLine(title=_('Kaltura Service URL'),
+                            default = u'http://www.kaltura.com',
+                            required=False,)
+
+    kalturaServiceBase = schema.TextLine(title=_('Kaltura Service Base'),
+                            default = u'/api_v3/index.php?service=',
                             required=False,)
 
     kalturaUserId = schema.TextLine(title=_('Kaltura User Id'),

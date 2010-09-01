@@ -18,10 +18,14 @@ Ext.extend(KalturaProxy, Ext.data.DataProxy,
         
         function startSession(){
             proxyWrapper.kConfig = new KalturaConfiguration(parseInt(proxyWrapper.partnerId));
+            proxyWrapper.kConfig.serviceUrl = proxyWrapper.serviceUrl;
+            proxyWrapper.kConfig.serviceBase = proxyWrapper.serviceBase;
             proxyWrapper.kClient = new KalturaClient(proxyWrapper.kConfig);
             proxyWrapper.kClient.session.start(sessionStarted, proxyWrapper.secret, proxyWrapper.kalturaUserId, proxyWrapper.sessionType);
         }
         function sessionStarted(success, data) {
+            if (!success)
+                return proxyWrapper.handleErrorResponse(data);
             proxyWrapper.kClient.setKs(data);
             return callback()
         }
@@ -69,9 +73,9 @@ Ext.extend(KalturaProxy, Ext.data.DataProxy,
                })
             },
             
-     handleErrorResponse : function(response, userContext, methodName)
+     handleErrorResponse : function(response, userContext)
                            {
-                              alert("Error while calling web service method:" + methodName + "\n" + response.get_message());
+                              alert("Error while calling web service method:" + $.toJSON(response));
                            },
  
      loadResponse : function (response, userContext, methodName)
@@ -350,12 +354,14 @@ Ext.ux.MediaBrowser = function(config) {
         store.load();
 
     }
-    else if (config.kalturaPartnerId && config.kalturaAdminSecret) {
+    else if (config.kaltura.partnerId && config.kaltura.adminSecret) {
         
         store = new Ext.data.JsonStore({
-            proxy: new KalturaProxy({partnerId: config.kalturaPartnerId,
-                                 secret: config.kalturaAdminSecret,
-                                 sessionType: KalturaSessionType.ADMIN
+            proxy: new KalturaProxy({partnerId: config.kaltura.partnerId,
+                                 secret: config.kaltura.adminSecret,
+                                 serviceUrl: config.kaltura.serviceUrl,
+                                 serviceBase: config.kaltura.serviceBase,
+                                 sessionType: KalturaSessionType.ADMIN,
                                 }),
             idProperty: 'id',
             root: 'objects',
