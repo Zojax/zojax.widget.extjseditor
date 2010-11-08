@@ -361,7 +361,7 @@ Ext.ux.MediaBrowser = function(config) {
                                  secret: config.kaltura.adminSecret,
                                  serviceUrl: config.kaltura.serviceUrl,
                                  serviceBase: config.kaltura.serviceBase,
-                                 sessionType: KalturaSessionType.ADMIN,
+                                 sessionType: KalturaSessionType.ADMIN
                                 }),
             idProperty: 'id',
             root: 'objects',
