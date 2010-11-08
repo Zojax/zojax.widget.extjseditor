@@ -505,7 +505,7 @@ Ext.ux.MediaBrowser = function(config) {
            store: store,       // grid and PagingToolbar using same store
            displayInfo: false,
            pageSize: 30,
-           prependButtons: true,
+           prependButtons: true
        }), ' ', '-'].concat((config.uploadURL ? [{
            xtype: 'button',
            iconCls: 'z-media-browser-addmedia',
