@@ -88,7 +88,9 @@ Ext.ux.HTMLEditorImage = function(url1, url2) {
     var range = selection.createRange();
 
     // insert the image over the selected text/range
+    alert(createImage().outerHTML);
     range.pasteHTML(createImage().outerHTML);
+    alert(editor.doc.body.innerHTML);
       };
   } else {
       // firefox-specific code
@@ -350,6 +352,12 @@ Ext.ux.HTMLEditorImage = function(url1, url2) {
     return {
   init: function(htmlEditor) {
       editor = htmlEditor;
+      
+      var onsync = function(editor, html)
+      { 
+          this.el.dom.value = html.replace(document.getElementsByTagName('HEAD')[0].base+'@@content.attachment/', '@@content.attachment/')
+      }
+      editor.on('sync', onsync);
 
       // append the insert image icon to the toolbar
       editor.tb.insertToolsBefore('insertorderedlist', {
