@@ -88,9 +88,7 @@ Ext.ux.HTMLEditorImage = function(url1, url2) {
     var range = selection.createRange();
 
     // insert the image over the selected text/range
-    alert(createImage().outerHTML);
     range.pasteHTML(createImage().outerHTML);
-    alert(editor.doc.body.innerHTML);
       };
   } else {
       // firefox-specific code
