@@ -353,9 +353,9 @@ Ext.ux.HTMLEditorImage = function(url1, url2) {
       
       var onsync = function(editor, html)
       { 
-          var base = document.getElementsByTagName('HEAD')[0].base+'@@content.attachment/';
+          var base = document.getElementsByTagName('HEAD')[0].getAttribute('base')+'@@content.attachment/';
           html = html.replace(base, '@@content.attachment/');
-          base = document.getElementsByTagName('HEAD')[0].base.replace(/(.+)\/.+\/$/, '$1/')+'@@content.attachment/';
+          base = document.getElementsByTagName('HEAD')[0].getAttribute('base').replace(/(.+)\/.+\/$/, '$1/')+'@@content.attachment/';
           html = html.replace(base, '@@content.attachment/');
           this.el.dom.value = html
       }
