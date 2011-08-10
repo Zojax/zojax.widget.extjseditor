@@ -59,6 +59,8 @@ Ext.ux.HTMLEditorImage = function(url1, url2) {
   imageUrl.form.findField('alt').setValue(data.title);
   imageUrl.form.findField('width').setValue(data.width);
   imageUrl.form.findField('height').setValue(data.height);
+  if (data.original)
+      imageUrl.form.findField('original').setValue(data.original);
   imageUrl.form.findField('constrain').setValue(true);
   sourceChanged();
 
@@ -70,12 +72,44 @@ Ext.ux.HTMLEditorImage = function(url1, url2) {
 
     // create new image node from image details
     var createImage = function() {
+
   var element = editor.win.document.createElement("img");
   element.src = imageUrl.form.findField('src').getValue();
   element.alt = imageUrl.form.findField('alt').getValue();
   element.style.width = imageUrl.form.findField('width').getValue() + "px";
   element.style.height = imageUrl.form.findField('height').getValue() + "px";
+
   return element;
+    }
+
+    // create new image with lightbox
+    var createLightbox = function() {
+      var thumbTemplate = new Ext.XTemplate(
+        '<tpl>',
+        '<a href="{href}" class="lightbox">',
+        '<img style="width: {width}px; height: {height}px;" alt="{alt}" src="{src}">',
+        '</a>',
+        '</tpl>'
+        );
+      thumbTemplate.compile();
+      var element = editor.win.document.createElement("span");
+      element.innerHTML = thumbTemplate.apply(
+        {
+          'src': imageUrl.form.findField('src').getValue(),
+          'alt': imageUrl.form.findField('alt').getValue(),
+          'width': imageUrl.form.findField('width').getValue(),
+          'height': imageUrl.form.findField('height').getValue(),
+          'href': imageUrl.form.findField('original').getValue()
+        });
+      return element;
+    }
+
+    // create new image with lightbox
+    var selectImageInsert = function() {
+        if (imageUrl.form.findField('original').getValue() && imageUrl.form.findField('original').getValue() != '')
+            return createLightbox();
+        else
+            return createImage();
     }
 
     // insert the image into the editor (browser-specific)
@@ -88,7 +122,7 @@ Ext.ux.HTMLEditorImage = function(url1, url2) {
     var range = selection.createRange();
 
     // insert the image over the selected text/range
-    range.pasteHTML(createImage().outerHTML);
+    range.pasteHTML(selectImageInsert().outerHTML);
       };
   } else {
       // firefox-specific code
@@ -102,7 +136,7 @@ Ext.ux.HTMLEditorImage = function(url1, url2) {
     }
 
     // insert the image
-    selection.getRangeAt(0).insertNode(createImage());
+    selection.getRangeAt(0).insertNode(selectImageInsert());
       };
   }
     }();
@@ -187,6 +221,10 @@ Ext.ux.HTMLEditorImage = function(url1, url2) {
       xtype: 'textfield',
       fieldLabel: 'Description',
       name: 'alt'
+        }, {
+      xtype: 'textfield',
+      fieldLabel: 'Original',
+      name: 'original'
         }, {
       xtype: 'textfield',
       fieldLabel: 'Title',
