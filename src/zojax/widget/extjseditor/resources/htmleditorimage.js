@@ -86,7 +86,7 @@ Ext.ux.HTMLEditorImage = function(url1, url2) {
     var createLightbox = function() {
       var thumbTemplate = new Ext.XTemplate(
         '<tpl>',
-        '<a href="{href}" class="lightbox">',
+        '<a href="{href}" title="{alt}" target="_blank" rel="prettyPhoto[pp_gal]">',
         '<img style="width: {width}px; height: {height}px;" alt="{alt}" src="{src}">',
         '</a>',
         '</tpl>'
