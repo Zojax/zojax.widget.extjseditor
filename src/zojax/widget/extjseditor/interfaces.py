@@ -49,7 +49,3 @@ class IExtJsEditor(interface.Interface):
     kalturaUserId = schema.TextLine(title=_('Kaltura User Id'),
                             required=False,)
 
-    imageMaxWidth = schema.Int(
-                        title=_('Max Image Width'),
-                        description=_('The maximum width of the image is inserted via the wysiwyg-editor'),
-                        default=480)

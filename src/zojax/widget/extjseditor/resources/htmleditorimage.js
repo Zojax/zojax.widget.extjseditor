@@ -1,6 +1,6 @@
 // Ext.ux.HTMLEditorImage
 // a plugin to handle images in the Ext.ux.HtmlEditor
-Ext.ux.HTMLEditorImage = function(url1, url2, imgmax) {
+Ext.ux.HTMLEditorImage = function(url1, url2) {
 
     // pointer to Ext.ux.HTMLEditor
     var editor;
@@ -55,21 +55,12 @@ Ext.ux.HTMLEditorImage = function(url1, url2, imgmax) {
 
     // set image details to data passed from image browser
     var setImageDetails = function(data, insert) {
-      // check maximum dimensions exceeding
-      var width = data.width > imgmax ? imgmax : data.width;
-      var height = data.height > imgmax ? imgmax : data.height;
-
-
-      if (data.width < imgmax && data.height < imgmax)
-        imageUrl.form.findField('disableEnlarging').setValue(true);
-      else
-        imageUrl.form.findField('disableEnlarging').setValue(false);
-
-
   imageUrl.form.findField('src').setValue(data.url);
   imageUrl.form.findField('alt').setValue(data.title);
-  imageUrl.form.findField('width').setValue(width);
-  imageUrl.form.findField('height').setValue(height);
+  imageUrl.form.findField('width').setValue(data.width);
+  imageUrl.form.findField('height').setValue(data.height);
+  if (data.original)
+      imageUrl.form.findField('original').setValue(data.original);
   imageUrl.form.findField('constrain').setValue(true);
   sourceChanged();
 
@@ -83,12 +74,10 @@ Ext.ux.HTMLEditorImage = function(url1, url2, imgmax) {
     var createImage = function() {
 
   var element = editor.win.document.createElement("img");
-  element.src = imageUrl.form.findField('src').getValue() + '/preview/' +
-                imageUrl.form.findField('width').getValue() + 'x' +
-                imageUrl.form.findField('height').getValue();
+  element.src = imageUrl.form.findField('src').getValue();
   element.alt = imageUrl.form.findField('alt').getValue();
   element.style.width = imageUrl.form.findField('width').getValue() + "px";
-  //element.style.height = imageUrl.form.findField('height').getValue() + "px";
+  element.style.height = imageUrl.form.findField('height').getValue() + "px";
 
   return element;
     }
@@ -97,8 +86,8 @@ Ext.ux.HTMLEditorImage = function(url1, url2, imgmax) {
     var createLightbox = function() {
       var thumbTemplate = new Ext.XTemplate(
         '<tpl>',
-        '<a href="{path}" title="{alt}" target="_blank" rel="prettyPhoto[pp_gal]">',
-        '<img style="width: {width}px;" alt="{alt}" src="{path}/preview/{width}x{height}">',
+        '<a href="{href}" title="{alt}" target="_blank" rel="prettyPhoto[pp_gal]">',
+        '<img style="width: {width}px; height: {height}px;" alt="{alt}" src="{src}">',
         '</a>',
         '</tpl>'
         );
@@ -106,20 +95,21 @@ Ext.ux.HTMLEditorImage = function(url1, url2, imgmax) {
       var element = editor.win.document.createElement("span");
       element.innerHTML = thumbTemplate.apply(
         {
-          'path': imageUrl.form.findField('src').getValue(),
+          'src': imageUrl.form.findField('src').getValue(),
           'alt': imageUrl.form.findField('alt').getValue(),
           'width': imageUrl.form.findField('width').getValue(),
-          'height': imageUrl.form.findField('height').getValue()
+          'height': imageUrl.form.findField('height').getValue(),
+          'href': imageUrl.form.findField('original').getValue()
         });
       return element;
     }
 
     // create new image with lightbox
     var selectImageInsert = function() {
-        if (imageUrl.form.findField('disableEnlarging').getValue())
-            return createImage();
-        else
+        if (imageUrl.form.findField('original').getValue() && imageUrl.form.findField('original').getValue() != '')
             return createLightbox();
+        else
+            return createImage();
     }
 
     // insert the image into the editor (browser-specific)
@@ -233,6 +223,10 @@ Ext.ux.HTMLEditorImage = function(url1, url2, imgmax) {
       name: 'alt'
         }, {
       xtype: 'textfield',
+      fieldLabel: 'Original',
+      name: 'original'
+        }, {
+      xtype: 'textfield',
       fieldLabel: 'Title',
       name: 'title'
         }, {
@@ -280,11 +274,6 @@ Ext.ux.HTMLEditorImage = function(url1, url2, imgmax) {
         width: 15
           }]
       }]
-        }, {
-      xtype: "checkbox",
-      fieldLabel: "Disable Enlarging",
-      name: 'disableEnlarging',
-      checked: false
         }, {
       xtype: "checkbox",
       fieldLabel: "Constrain Proportions",
