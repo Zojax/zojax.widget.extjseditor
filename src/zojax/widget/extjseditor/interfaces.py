@@ -53,3 +53,8 @@ class IExtJsEditor(interface.Interface):
                         title=_('Max Image Width'),
                         description=_('The maximum width of the image is inserted via the wysiwyg-editor'),
                         default=480)
+
+    imageMaxHeight = schema.Int(
+                        title=_('Max Image Height'),
+                        description=_('The maximum height of the image is inserted via the wysiwyg-editor'),
+                        default=360)
