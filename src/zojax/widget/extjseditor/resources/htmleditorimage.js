@@ -56,11 +56,11 @@ Ext.ux.HTMLEditorImage = function(url1, url2, imgmax) {
     // set image details to data passed from image browser
     var setImageDetails = function(data, insert) {
       // check maximum dimensions exceeding
-      var width = data.width > imgmax ? imgmax : data.width;
-      var height = data.height > imgmax ? imgmax : data.height;
+      var width = data.width > imgmax.width ? imgmax.width : data.width;
+      var height = data.height > imgmax.height ? imgmax.height : data.height;
 
 
-      if (data.width < imgmax && data.height < imgmax)
+      if (data.width < imgmax.width && data.height < imgmax.height)
         imageUrl.form.findField('disableEnlarging').setValue(true);
       else
         imageUrl.form.findField('disableEnlarging').setValue(false);
@@ -87,7 +87,7 @@ Ext.ux.HTMLEditorImage = function(url1, url2, imgmax) {
                 imageUrl.form.findField('width').getValue() + 'x' +
                 imageUrl.form.findField('height').getValue();
   element.alt = imageUrl.form.findField('alt').getValue();
-  element.style.width = imageUrl.form.findField('width').getValue() + "px";
+  //element.style.width = imageUrl.form.findField('width').getValue() + "px";
   //element.style.height = imageUrl.form.findField('height').getValue() + "px";
 
   return element;
@@ -98,7 +98,7 @@ Ext.ux.HTMLEditorImage = function(url1, url2, imgmax) {
       var thumbTemplate = new Ext.XTemplate(
         '<tpl>',
         '<a href="{path}" title="{alt}" target="_blank" rel="prettyPhoto[pp_gal]">',
-        '<img style="width: {width}px;" alt="{alt}" src="{path}/preview/{width}x{height}">',
+        '<img alt="{alt}" src="{path}/preview/{width}x{height}">',
         '</a>',
         '</tpl>'
         );
@@ -271,6 +271,7 @@ Ext.ux.HTMLEditorImage = function(url1, url2, imgmax) {
                     listeners: {
                         'change': {fn: heightChanged, scope: this}
                     }
+
           }]
       }, {
           items: [{
