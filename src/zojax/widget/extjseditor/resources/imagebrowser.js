@@ -147,7 +147,7 @@ Ext.ux.ImageBrowser = function(config) {
 	    {name: 'width', type: 'float'},
 	    {name: 'height', type: 'float'},
 	    {name: 'size', type: 'float'},
-	    'url', 'preview', 'original'
+	    'url', 'preview'
 	],
 	listeners: {
 	    'beforeload': {fn: indicatorOn, scope: this},

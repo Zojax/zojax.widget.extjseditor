@@ -43,7 +43,7 @@ Ext.EventManager.onDocumentReady(function(){
        width: %(width)s, height: %(height)s, applyTo: '%(id)s',
        enableLinks: false,
        plugins: [new Ext.ux.HTMLEditorLink(%(linkConfig)s),
-       new Ext.ux.HTMLEditorImage('%(url1)s', '%(url2)s'),
+       new Ext.ux.HTMLEditorImage('%(url1)s', '%(url2)s', %(imgmax)s),
        new Ext.ux.HTMLEditorMedia(%(mediaConfig)s)]})
     });
 </script>"""
@@ -109,6 +109,8 @@ class ExtJSEditorWidget(textarea.TextAreaWidget):
                                                                   userId=configlet.kalturaUserId)
                                                      )),
                 'linkConfig': simplejson.dumps(dict(contentUrl=contentUrl)),
+                'imgmax': dict(width=configlet.imageMaxWidth,
+                               height=configlet.imageMaxHeight),
                 }, ('extjs-widgets',))
 
         html = """<div><textarea id="%(id)s" name="%(name)s" class="%(klass)s"
