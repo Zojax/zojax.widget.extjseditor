@@ -67,16 +67,17 @@ Let's edit content, editor includes js to head and includes extjs.js
     <link rel="stylesheet" type="text/css" href="http://localhost/.../extjs.css" />
     <script type="text/javascript" src="http://localhost/.../extjs-widgets.js"></script>
     <link rel="stylesheet" type="text/css" href="http://localhost/.../extjs-widgets.css" />
+    <script type="text/javascript" src="http://apis.kaltura.org/kalturaJsClient/kaltura.min.js.php"></script>
     <script type="text/javascript">
     Ext.EventManager.onDocumentReady(function(){
        Ext.QuickTips.init();
-       var htmlEditor = new Ext.ux.HTMLEditor({
-          width: 600, height: 300, applyTo: 'form-widgets-text',
-          enableLinks: false,
-          plugins: [new Ext.ux.HTMLEditorLink(),
-          new Ext.ux.HTMLEditorImage('http://localhost/@@content.attachments/.../imageManagerAPI/', 'http://localhost/@@content.attachments/.../imageManagerAPI/'),
-          new Ext.ux.HTMLEditorMedia('http://localhost/@@content.attachments/.../mediaManagerAPI/', 'http://localhost/@@content.attachments/.../mediaManagerAPI/')]})
-       });
+        var htmlEditor = new Ext.ux.HTMLEditor({
+           width: 600, height: 300, applyTo: 'form-widgets-text',
+           enableLinks: false,
+           plugins: [new Ext.ux.HTMLEditorLink({"contentUrl": "http://localhost/@@content.browser/.../contentManagerAPI/"}),
+           new Ext.ux.HTMLEditorImage('http://localhost/@@content.attachments/.../imageManagerAPI/', 'http://localhost/@@content.attachments/.../imageManagerAPI/'),
+           new Ext.ux.HTMLEditorMedia({"kaltura": {"serviceBase": "/api_v3/index.php?service=", "partnerId": null, "serviceUrl": "http://www.kaltura.com", "userSecret": null, "userId": null, "adminSecret": null}, "mediaAPIUrl": null, "mediaUrl1": "http://localhost/@@content.attachments/.../mediaManagerAPI/", "mediaUrl2": "http://localhost/@@content.attachments/.../mediaManagerAPI/"})]})
+        });
     </script>
     ...
     <div class="z-form-fieldset">

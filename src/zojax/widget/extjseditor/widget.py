@@ -42,7 +42,7 @@ Ext.EventManager.onDocumentReady(function(){
     var htmlEditor = new Ext.ux.HTMLEditor({
        width: %(width)s, height: %(height)s, applyTo: '%(id)s',
        enableLinks: false,
-       plugins: [new Ext.ux.HTMLEditorLink(),
+       plugins: [new Ext.ux.HTMLEditorLink(%(linkConfig)s),
        new Ext.ux.HTMLEditorImage('%(url1)s', '%(url2)s'),
        new Ext.ux.HTMLEditorMedia(%(mediaConfig)s)]})
     });
@@ -72,6 +72,7 @@ class ExtJSEditorWidget(textarea.TextAreaWidget):
         url2 = ''
         mediaUrl1 = ''
         mediaUrl2 = ''
+        contentUrl = ''
         site = getSite()
         ids = getUtility(IIntIds)
         siteUrl = absoluteURL(site, self.request)
@@ -87,7 +88,8 @@ class ExtJSEditorWidget(textarea.TextAreaWidget):
                 siteUrl, ids.getId(space))
             mediaUrl2 = '%s/@@content.attachments/%s/mediaManagerAPI/'%(
                 siteUrl, ids.getId(space))
-
+        if contextId:
+            contentUrl = '%s/@@content.browser/%s/contentManagerAPI/'%(siteUrl, contextId)
         configlet = getUtility(IExtJsEditor)
         includeInplaceSource('<script type="text/javascript" src="http://apis.kaltura.org/kalturaJsClient/kaltura.min.js.php"></script>', ('extjs-widgets',))
         includeInplaceSource(jssource%{
@@ -106,6 +108,7 @@ class ExtJSEditorWidget(textarea.TextAreaWidget):
                                                                   serviceBase=configlet.kalturaServiceBase,
                                                                   userId=configlet.kalturaUserId)
                                                      )),
+                'linkConfig': simplejson.dumps(dict(contentUrl=contentUrl)),
                 }, ('extjs-widgets',))
 
         html = """<div><textarea id="%(id)s" name="%(name)s" class="%(klass)s"

@@ -1,6 +1,6 @@
 // Ext.ux.HTMLEditorLink
 // a plugin to handle links in the Ext.ux.HtmlEditor
-Ext.ux.HTMLEditorLink = function() {
+Ext.ux.HTMLEditorLink = function(config) {
 
     // pointer to Ext.ux.HTMLEditor
     var editor;
@@ -10,6 +10,9 @@ Ext.ux.HTMLEditorLink = function() {
 
     // pointer to Ext.FormPanel
     var linkUrl;
+    
+    var contentBrowserSite;
+    var baseUrl = config.contentUrl;
 
     // return the selected link (if an link is selected)
     var getSelectedLink = function() {
@@ -42,9 +45,9 @@ Ext.ux.HTMLEditorLink = function() {
 
     // set link details to data passed from link browser
     var setLinkDetails = function(data, insert) {
-  linkUrl.form.findField('src').setValue(data.url);
+    	linkUrl.form.findField('src').setValue(data.url);
   linkUrl.form.findField('alt').setValue(data.description);
-  linkUrl.form.findField('title').setValue(data.title);
+  linkUrl.form.findField('title').setValue(data.text);
   linkUrl.form.findField('target').setValue(data.target);
   sourceChanged();
 
@@ -191,12 +194,26 @@ Ext.ux.HTMLEditorLink = function() {
     }
       });
 
-   
+      if (baseUrl) {
+    	    contentBrowserSite = new Ext.ux.ContentBrowser({
+    	              frame: false,
+    	              border: false,
+    	              autoWidth: true,
+    	              title: 'Contents',
+
+    	              // medias api
+    	              listUrl: baseUrl + 'listing',
+    	              // set the callback from the content browser
+    	              callback: setLinkDetails
+    	    });
+    	      }
+
 
       var items = [];
+      if (contentBrowserSite) {items[items.length] = contentBrowserSite;}
       items[items.length] = linkUrl;
 
-      var tabs = new Ext.Panel({
+      var tabs = new Ext.TabPanel({
     margins: '3 3 3 0',
     activeTab: 0,
     layoutOnTabChange: true,
@@ -259,7 +276,7 @@ Ext.ux.HTMLEditorLink = function() {
 
   // show the window
   win.show(this);
-  linkUrl.form.findField('src').focus();
+  //linkUrl.form.findField('src').focus();
     }
 
     // PUBLIC
