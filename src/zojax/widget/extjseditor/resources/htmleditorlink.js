@@ -276,7 +276,7 @@ Ext.ux.HTMLEditorLink = function(config) {
 
   // show the window
   win.show(this);
-  //linkUrl.form.findField('src').focus();
+  	linkUrl.form.findField('src').focus();
     }
 
     // PUBLIC
