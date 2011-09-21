@@ -76,9 +76,12 @@ class ExtJSEditorWidget(textarea.TextAreaWidget):
         site = getSite()
         ids = getUtility(IIntIds)
         siteUrl = absoluteURL(site, self.request)
-
+        context = self.context
         contextId = ids.queryId(removeAllProxies(self.context))
-        if contextId and checkPermission('zojax.AddContentAttachment', self.context):
+        if contextId is None:
+            context = site
+            contextId = ids.queryId(removeAllProxies(context))
+        if contextId and checkPermission('zojax.AddContentAttachment', context):
             url1 = '%s/@@content.attachments/%s/imageManagerAPI/'%(siteUrl, contextId)
             mediaUrl1 = '%s/@@content.attachments/%s/mediaManagerAPI/'%(siteUrl, contextId)
 
