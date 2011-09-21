@@ -82,7 +82,7 @@ Ext.ux.ContentBrowser = function(config) {
   loader: loader,
   root: {
       nodeType: 'async',
-      text: 'root',
+      text: config.rootTitle,
       draggable: false,
       id: 'root'
  },

@@ -11,6 +11,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+from zojax.content.type.interfaces import IItem
 """
 
 $Id$
@@ -77,7 +78,7 @@ class ExtJSEditorWidget(textarea.TextAreaWidget):
         ids = getUtility(IIntIds)
         siteUrl = absoluteURL(site, self.request)
         context = self.context
-        contextId = ids.queryId(removeAllProxies(self.context))
+        contextId = ids.queryId(removeAllProxies(context))
         if contextId is None:
             context = site
             contextId = ids.queryId(removeAllProxies(context))
@@ -111,7 +112,7 @@ class ExtJSEditorWidget(textarea.TextAreaWidget):
                                                                   serviceBase=configlet.kalturaServiceBase,
                                                                   userId=configlet.kalturaUserId)
                                                      )),
-                'linkConfig': simplejson.dumps(dict(contentUrl=contentUrl)),
+                'linkConfig': simplejson.dumps(dict(contentUrl=contentUrl, rootTitle=IItem(site).title)),
                 'imgmax': dict(width=configlet.imageMaxWidth,
                                height=configlet.imageMaxHeight),
                 }, ('extjs-widgets',))

@@ -13,6 +13,7 @@ Ext.ux.HTMLEditorLink = function(config) {
     
     var contentBrowserSite;
     var baseUrl = config.contentUrl;
+    var rootTitle = config.rootTitle;
 
     // return the selected link (if an link is selected)
     var getSelectedLink = function() {
@@ -203,6 +204,7 @@ Ext.ux.HTMLEditorLink = function(config) {
 
     	              // medias api
     	              listUrl: baseUrl + 'listing',
+    	              rootTitle: rootTitle,
     	              // set the callback from the content browser
     	              callback: setLinkDetails
     	    });
