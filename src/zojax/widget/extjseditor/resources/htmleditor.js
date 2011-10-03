@@ -458,9 +458,9 @@ Ext.ux.HTMLEditor = Ext.extend(Ext.form.HtmlEditor, {
 	
 	var onpush = function(editor, html)
     { 
-        editor.getEditorBody().innerHTML = html.replace(/(href=\".+|src=\".+)&amp;/gi, function($0, $1){
-            return $1 ? $1 + '&' : $0;
-        })
+		editor.getEditorBody().innerHTML = html.replace(/(href=\".+|src=\".+)\&amp\;/gi, function($0, $1){
+			return $1 ? $1 + '&' : $0;
+        });
     }
     this.on('push', onpush);
 	
