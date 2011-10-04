@@ -65,7 +65,7 @@
   }
   .z-img-browser-view .x-view-over {
     border: 1px solid #dddddd;
-    background: #efefef url('../@@/extjs/images/default/grid/row-over.gif') repeat-x left top;
+    background: #efefef url('../@@/extjs/resources/images/default/grid/row-over.gif') repeat-x left top;
     padding: 4px;
   }
   .z-img-browser-view .x-view-selected {
@@ -81,7 +81,7 @@
   }
   .z-img-browser-view .loading-indicator {
     font-size: 11px;
-    background-image: url('../@@/extjs/images/grid/loading.gif');
+    background-image: url('../@@/extjs/resources/images/grid/loading.gif');
     background-repeat: no-repeat;
     background-position: left;
     padding-left: 20px;
@@ -122,7 +122,7 @@
   }
   .z-media-browser-view .x-view-over {
     border: 1px solid #dddddd;
-    background: #efefef url('../@@/extjs/images/default/grid/row-over.gif') repeat-x left top;
+    background: #efefef url('../@@/extjs/resources/images/default/grid/row-over.gif') repeat-x left top;
     padding: 4px;
   }
   .z-media-browser-view .x-view-selected {
@@ -138,7 +138,7 @@
   }
   .z-media-browser-view .loading-indicator {
     font-size: 11px;
-    background-image: url('../@@/extjs/images/grid/loading.gif');
+    background-image: url('../@@/extjs/resources/images/grid/loading.gif');
     background-repeat: no-repeat;
     background-position: left;
     padding-left: 20px;

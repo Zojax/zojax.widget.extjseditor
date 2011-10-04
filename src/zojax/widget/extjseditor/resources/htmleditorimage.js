@@ -372,7 +372,7 @@ Ext.ux.HTMLEditorImage = function(url1, url2, imgmax) {
     }],
         listeners: {
             'show': function() {
-      imageUrl.show();
+            	imageUrl.show();
           imageUrl.form.reset();
       var element = getSelectedImage();
       if (element) {
@@ -393,7 +393,7 @@ Ext.ux.HTMLEditorImage = function(url1, url2, imgmax) {
   }
 
   // show the window
-  win.show(this);
+    win.show(this);
     }
 
     // PUBLIC

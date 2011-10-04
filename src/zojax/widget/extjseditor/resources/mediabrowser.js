@@ -106,14 +106,14 @@ Ext.ux.MediaBrowser = function(config) {
     // turn indicator on to indicate media list is loading
     var indicatorOn = function() {
   if (Ext.getCmp(myid) && Ext.getCmp(myid).getTopToolbar().items) {
-      Ext.getCmp(myid).getTopToolbar().items.map.indicator.disable();
+      Ext.getCmp(myid).getTopToolbar().items.map[indicatorId].disable();
     }
     };
 
     // turn indicator off
     var indicatorOff = function() {
   if (Ext.getCmp(myid) && Ext.getCmp(myid).getTopToolbar().items) {
-      Ext.getCmp(myid).getTopToolbar().items.map.indicator.enable();
+      Ext.getCmp(myid).getTopToolbar().items.map[indicatorId].enable();
     }
     };
 
@@ -361,7 +361,7 @@ Ext.ux.MediaBrowser = function(config) {
                                  secret: config.kaltura.adminSecret,
                                  serviceUrl: config.kaltura.serviceUrl,
                                  serviceBase: config.kaltura.serviceBase,
-                                 sessionType: KalturaSessionType.ADMIN
+                                 sessionType: KalturaSessionType
                                 }),
             idProperty: 'id',
             root: 'objects',

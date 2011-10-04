@@ -21,10 +21,10 @@ Ext.ux.FileUploadButton = Ext.extend(Ext.Button, {
     });
 
     // calculate width of button (as IE reports this.el.getWidth incorrectly)
-    var width = btnCt.child("td.x-btn-left").getWidth() +
-      btnCt.child("button.x-btn-text").getWidth() +
-      btnCt.child("td.x-btn-center").getPadding("lr") +
-      btnCt.child("td.x-btn-right").getWidth();
+    var width = btnCt.select("td.x-btn-left").getWidth() +
+      btnCt.select("button.x-btn-text").getWidth() +
+      btnCt.select("td.x-btn-center").getPadding("lr") +
+      btnCt.select("td.x-btn-right").getWidth();
 
     // wrap button container in a root container
     // this root container will also wrap the file upload container
@@ -81,7 +81,7 @@ Ext.ux.FileUploadButton = Ext.extend(Ext.Button, {
     // if mouse leaves the transparent file upload object then
     // simulate the mouse leaving the button
     this.fileUpload.on("mouseout", function() {
-      this.el.removeClass("x-btn-over");
+    	this.el.removeClass("x-btn-over");
     }, this);
 
     // if mouse button is pressed while over the transparent file

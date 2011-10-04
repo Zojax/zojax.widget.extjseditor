@@ -68,7 +68,13 @@ Ext.ux.HTMLEditorLink = function(config) {
         }
         else {
             var selection = editor.win.getSelection();
-            return selection.getRangeAt(0)
+            try {
+            	return selection.getRangeAt(0)
+            }
+            catch (err) {
+            	return ''
+            }
+            
         }
     }
 

@@ -388,6 +388,11 @@ Ext.ux.HTMLEditor = Ext.extend(Ext.form.HtmlEditor, {
 	    }
 	}
     },
+    
+    cleanHtml: function(html) {
+    	console.log(html);
+    	return html;
+    },
 
     // overrides Ext.form.HtmlEditor.createToolbar
     // most functionality has been removed as this is called
@@ -458,11 +463,12 @@ Ext.ux.HTMLEditor = Ext.extend(Ext.form.HtmlEditor, {
 	
 	var onpush = function(editor, html)
     { 
+		console.log('push');
 		editor.getEditorBody().innerHTML = html.replace(/(href=\".+|src=\".+)\&amp\;/gi, function($0, $1){
 			return $1 ? $1 + '&' : $0;
         });
     }
-    this.on('push', onpush);
+    this.on('beforepush', onpush);
 	
 	// inherited
 	Ext.menu.MenuMgr.hideAll();

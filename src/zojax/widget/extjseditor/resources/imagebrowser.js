@@ -14,18 +14,19 @@ Ext.ux.ImageBrowser = function(config) {
     var myid = Ext.id();
     var filterId = Ext.id();
     var indicatorId = Ext.id();
+    console.log(indicatorId);
 
     // turn indicator on to indicate image list is loading
     var indicatorOn = function() {
 	if (Ext.getCmp(myid)) {
-	    Ext.getCmp(myid).getTopToolbar().items.map.indicator.disable();
+	    Ext.getCmp(indicatorId).disable();
   	}
     };
 
     // turn indicator off
     var indicatorOff = function() {
 	if (Ext.getCmp(myid)) {
-	    Ext.getCmp(myid).getTopToolbar().items.map.indicator.enable();
+		Ext.getCmp(indicatorId).enable();
   	}
     };
 
@@ -90,8 +91,9 @@ Ext.ux.ImageBrowser = function(config) {
 
     // upload a new image file
     var uploadFile = function(record) {
-	indicatorOn();
-	record.appendTo(form);
+    	indicatorOn();
+    	record.el.appendTo(form);
+    	form.show();
 	Ext.Ajax.request({
 	  method: 'post',
 	  url: this.uploadURL,
@@ -271,11 +273,11 @@ Ext.ux.ImageBrowser = function(config) {
 		       scope: this
 		   }, '->', {
 		       xtype: 'tbindicator',
-		       id: indicatorId
+		       id: indicatorId,
+		       ctCls: 'x-tbar-loading',
 		   }, ' ']
 	}]
     });
-    
     // call Ext.Window constructor passing config
     Ext.ux.ImageBrowser.superclass.constructor.call(this, config);
     
@@ -293,8 +295,8 @@ Ext.extend(Ext.ux.ImageBrowser, Ext.Panel, {
 
   // overrides Ext.Window.show
   show: function(animateTarget, cb, scope) {
-      // reset view if previously used
-      if (this.rendered) {
+	  // reset view if previously used
+	  if (this.rendered) {
 	  this.reset();
       }
       
