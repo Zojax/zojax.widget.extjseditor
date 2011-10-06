@@ -39,13 +39,16 @@ from interfaces import IExtJsEditor
 
 jssource = """<script type="text/javascript">
 Ext.EventManager.onDocumentReady(function(){
+   $($('#%(id)s').attr('form')).submit(function() {var e = Ext.getCmp('cmp-%(id)s'); e.pushValue(); e.syncValue()});
    Ext.QuickTips.init();
-    var htmlEditor = new Ext.ux.HTMLEditor({
+    var htmlEditor = new Ext.form.HtmlEditor({
        width: %(width)s, height: %(height)s, applyTo: '%(id)s',
        enableLinks: false,
+       id:'cmp-%(id)s',
        plugins: [new Ext.ux.HTMLEditorLink(%(linkConfig)s),
        new Ext.ux.HTMLEditorImage('%(url1)s', '%(url2)s', %(imgmax)s),
-       new Ext.ux.HTMLEditorMedia(%(mediaConfig)s)]})
+       new Ext.ux.HTMLEditorMedia(%(mediaConfig)s)
+       ]})
     });
 </script>"""
 

@@ -184,4 +184,7 @@
     background: transparent url(extjs-editor/link.png) no-repeat;
   }
 
+  .x-bar-filter {
+    z-index: auto !important;
+  }
 }

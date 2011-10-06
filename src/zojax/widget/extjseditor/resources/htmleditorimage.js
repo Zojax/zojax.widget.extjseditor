@@ -410,9 +410,11 @@ Ext.ux.HTMLEditorImage = function(url1, url2, imgmax) {
           this.el.dom.value = html
       }
       editor.on('sync', onsync);
-
+      editor.on('render', this.onRender, this);
+  },
+  onRender: function() {
       // append the insert image icon to the toolbar
-      editor.tb.insertToolsBefore('insertorderedlist', {
+	  var btn = editor.getToolbar().addButton({
     itemId: 'image',
     cls: 'x-btn-icon x-edit-image',
     handler: openImageWindow,

@@ -291,20 +291,22 @@ Ext.ux.HTMLEditorLink = function(config) {
     return {
   init: function(htmlEditor) {
       editor = htmlEditor;
-
-      // append the insert link icon to the toolbar
-      editor.tb.insertToolsBefore('insertorderedlist', {
-    itemId: 'link',
-    cls: 'x-btn-icon x-edit-link',
-    handler: openLinkWindow,
-    scope: this,
-    clickEvent: 'mousedown',
-    tooltip: {
-        title: 'Link',
-        text: 'Insert/edit a link.',
-        cls: 'x-html-editor-tip'
-    }
-      });
+      editor.enableLinks = false;
+      editor.on('render', this.onRender, this);
+  },
+  onRender: function() {
+	  var btn = editor.getToolbar().addButton({
+		    itemId: 'link',
+		    cls: 'x-btn-icon x-edit-link',
+		    handler: openLinkWindow,
+		    scope: this,
+		    clickEvent: 'mousedown',
+		    tooltip: {
+		        title: 'Link',
+		        text: 'Insert/edit a link.',
+		        cls: 'x-html-editor-tip'
+		    }
+	  })
   }
     }
 }

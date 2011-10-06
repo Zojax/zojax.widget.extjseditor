@@ -31,9 +31,8 @@
      cache="dynamic"
      library="extjs-widgets"
      require="extjs jquery-plugins">
-    <resource path="extjs-editor/fileuploadbutton.js" />
+    <resource path="extjs-editor/Ext.ux.UploadDialog.js" />
     <resource path="extjs-editor/fileuploadfield.js" />
-    <resource path="extjs-editor/htmleditor.js" />
     <resource path="extjs-editor/htmleditorimage.js" />
     <resource path="extjs-editor/imagebrowser.js" />
     <resource path="extjs-editor/htmleditormedia.js" />
@@ -42,6 +41,7 @@
     <resource path="extjs-editor/htmleditorlink.js" />
     <resource path="extjs-editor/loadingindicator.js" />
     <resource path="extjs-editor/statictextfield.js" />
+
   </zojax:resourcepackage>
 
   <zojax:resourcepackage

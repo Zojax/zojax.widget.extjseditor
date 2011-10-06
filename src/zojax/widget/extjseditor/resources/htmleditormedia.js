@@ -348,7 +348,7 @@ Ext.ux.HTMLEditorMedia = function(config) {
           });
       }
 
-      if (config.kaltura.partnerId && config.kaltura.adminSecret) {
+      if (config.kaltura.partnerId && config.kaltura.adminSecret && typeof KalturaSessionType != "undefined") {
           mediaBrowserKaltura = new Ext.ux.MediaBrowser({
                     frame: false,
                     border: false,
@@ -440,9 +440,11 @@ Ext.ux.HTMLEditorMedia = function(config) {
     return {
   init: function(htmlEditor) {
       editor = htmlEditor;
-
+      editor.on('render', this.onRender, this);
+  },
+  onRender: function() {
       // append the insert media icon to the toolbar
-      editor.tb.insertToolsBefore('insertorderedlist', {
+	  var btn = editor.getToolbar().addButton({
     itemId: 'media',
     cls: 'x-btn-icon x-edit-media',
     handler: openMediaWindow,

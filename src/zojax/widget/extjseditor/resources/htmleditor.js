@@ -390,7 +390,6 @@ Ext.ux.HTMLEditor = Ext.extend(Ext.form.HtmlEditor, {
     },
     
     cleanHtml: function(html) {
-    	console.log(html);
     	return html;
     },
 
@@ -463,7 +462,6 @@ Ext.ux.HTMLEditor = Ext.extend(Ext.form.HtmlEditor, {
 	
 	var onpush = function(editor, html)
     { 
-		console.log('push');
 		editor.getEditorBody().innerHTML = html.replace(/(href=\".+|src=\".+)\&amp\;/gi, function($0, $1){
 			return $1 ? $1 + '&' : $0;
         });

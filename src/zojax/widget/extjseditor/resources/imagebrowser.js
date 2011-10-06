@@ -14,7 +14,7 @@ Ext.ux.ImageBrowser = function(config) {
     var myid = Ext.id();
     var filterId = Ext.id();
     var indicatorId = Ext.id();
-    console.log(indicatorId);
+    var sortSelectId = Ext.id();
 
     // turn indicator on to indicate image list is loading
     var indicatorOn = function() {
@@ -70,39 +70,25 @@ Ext.ux.ImageBrowser = function(config) {
     });
     
     // called if image was uploaded successfully
-    var uploadSuccess = function(response, options) {
-	indicatorOff();
-	var cleaned = response.responseText.replace(/<\/?pre>/ig, '');
-	response = Ext.util.JSON.decode(cleaned);
-	if (response.success == 'true') {
-	    this.reset();
-	    view.refresh();
-	    view.select(response.file);
-	} else {
-	    Ext.MessageBox.alert("Upload Error", response.message);
-	}
+    var uploadSuccess = function(dialog, filename, response) {
+    	indicatorOff();
+    	dialog.hide();
+    	store.reload({callback: function() {view.select(store.find('name', response.file))}})
     };
 
     // called if image was not uploaded successfully
-    var uploadFailure = function(response, options) {
-	indicatorOff();
-	Ext.MessageBox.alert("Upload Failed", response.responseText);
+    var uploadFailure = function(dialog, filename) {
+    	indicatorOff();
+    	Ext.MessageBox.alert("Upload Failed", filename);
     };
 
     // upload a new image file
     var uploadFile = function(record) {
-    	indicatorOn();
-    	record.el.appendTo(form);
-    	form.show();
-	Ext.Ajax.request({
-	  method: 'post',
-	  url: this.uploadURL,
-	  isUpload: true,
-	  form: form,
-	  success: uploadSuccess,
-	  failure: uploadFailure,
-	  scope: this
-	});
+    	indicatorOff();
+    	var d = new Ext.ux.UploadDialog.Dialog({url: this.uploadURL});
+    	d.on('uploadsuccess', uploadSuccess);
+    	d.on('uploadfailed', uploadFailure);
+    	d.show();
     };
     
     // delete an image file
@@ -142,8 +128,10 @@ Ext.ux.ImageBrowser = function(config) {
     
     // create json store for loading image data
     var store = new Ext.data.JsonStore({
-	url: config.listURL + '?pw=80&ph=80',
+	url: config.listURL,
+	baseParams:{pw:80, ph:80},
 	root: 'images',
+	remoteSort:true,
 	fields: [
 	    'id', 'name', 'title', 'modified',
 	    {name: 'width', type: 'float'},
@@ -153,11 +141,15 @@ Ext.ux.ImageBrowser = function(config) {
 	],
 	listeners: {
 	    'beforeload': {fn: indicatorOn, scope: this},
-	    'load': {fn: function() {indicatorOff(); sortImages()}, scope: this},
+	    'load': {fn: function() {indicatorOff()}, scope: this},
 	    'loadexception': {fn: indicatorOff, scope: this}
 	}
     });
-    store.load();
+    store.load({            params: {
+            // specify params for the first page load if using paging
+            start: 0,          
+            limit: 30
+}});
     
     // called when image selection is changed
     var selectionChanged = function() {
@@ -206,12 +198,15 @@ Ext.ux.ImageBrowser = function(config) {
 
     // create filter to easily search images
     var filterView = function() {
-	var filter = Ext.getCmp('filter');
-	view.store.filter('name', filter.getValue());
-    };
+	var filter = Ext.getCmp(filterId);
+	var f = [];
+	if (filter.getValue())
+		f = {property:'name', value:filter.getValue()}
+	view.store.filter(f);
+	};
     
     var sortImages = function(){
-        var v = Ext.getCmp('sortSelect').getValue();
+        var v = Ext.getCmp(sortSelectId).getValue();
         view.store.sort(v, v == 'title' ? 'asc' : 'desc');
     }
     
@@ -237,11 +232,12 @@ Ext.ux.ImageBrowser = function(config) {
           		       }, this, {buffer:500});
       			   }, scope: this}
 		       }
-		   }, ' ', '-', {
+		   }, ' ', {
 	           text: 'Sort By:'
 	       }, {
-	           id: 'sortSelect',
+	           id: sortSelectId,
 	           xtype: 'combo',
+	           lazyRender: true,
 	           typeAhead: true,
 	           triggerAction: 'all',
 	           width: 100,
@@ -251,6 +247,7 @@ Ext.ux.ImageBrowser = function(config) {
 	           valueField: 'name',
 	           lazyInit: false,
 	           value: 'modified',
+	           ctCls: 'x-bar-filter',
 	           store: new Ext.data.SimpleStore({
 	               fields: ['name', 'desc'],
 	               data : [['title', 'Title'],
@@ -260,13 +257,13 @@ Ext.ux.ImageBrowser = function(config) {
 	           listeners: {
 	               'select': {fn:function(){sortImages()}, scope:this}
 	           }
-	       }, ' ', '-', {
-		       xtype: 'fileuploadbutton',
+	       },'-', {
+		       xtype: 'button',
 		       iconCls: 'z-img-browser-addimage',
 		       text: 'Upload',
 		       handler: uploadFile.createDelegate(this),
 		       scope: this
-		   }, {
+		   }, ' ', {
 		       iconCls: 'z-img-browser-deleteimage',
 		       text:'Delete',
 		       handler: confirmDelete,
@@ -275,7 +272,13 @@ Ext.ux.ImageBrowser = function(config) {
 		       xtype: 'tbindicator',
 		       id: indicatorId,
 		       ctCls: 'x-tbar-loading',
-		   }, ' ']
+		   }, ' '],
+		bbar: [new Ext.PagingToolbar({
+	           store: store,       // grid and PagingToolbar using same store
+	           displayInfo: false,
+	           pageSize: 30,
+	           prependButtons: true
+	       })]
 	}]
     });
     // call Ext.Window constructor passing config

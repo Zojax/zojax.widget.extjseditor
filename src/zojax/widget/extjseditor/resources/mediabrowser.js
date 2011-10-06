@@ -308,9 +308,11 @@ Ext.ux.MediaBrowser = function(config) {
     var store;
     if (config.listURL) {
      store = new Ext.data.JsonStore({
-      url: config.listURL + '?pw=80&ph=80',
-      root: 'medias',
+      url: config.listURL,
+      baseParams:{pw:80, ph:80},
+  	  root: 'medias',
       autoLoad: false,
+      remoteSort: true,
       fields: [
                'id', 'name', 'title','description','type', 'autoplay',
                'modified',
@@ -325,8 +327,11 @@ Ext.ux.MediaBrowser = function(config) {
           'loadexception': {fn: indicatorOff, scope: this}
       }
         });
-     store.load();
-
+     store.load({            params: {
+         // specify params for the first page load if using paging
+         start: 0,          
+         limit: 30
+     }})
     }
     else if (config.apiURL) {
         store = new Ext.data.JsonStore({
@@ -351,8 +356,11 @@ Ext.ux.MediaBrowser = function(config) {
                 'loadexception': {fn: indicatorOff, scope: this}
             }
               });
-        store.load();
-
+        store.load({            params: {
+            // specify params for the first page load if using paging
+            start: 0,          
+            limit: 30
+        }})
     }
     else if (config.kaltura.partnerId && config.kaltura.adminSecret) {
         
@@ -447,12 +455,17 @@ Ext.ux.MediaBrowser = function(config) {
                                limit: 30}});
   }
   else {
-  view.store.filter('name', filter.getValue());
+		var f = [];
+		if (filter.getValue())
+			f = {property:'name', value:filter.getValue()}
+		view.store.filter(f);
+	 view.store.filter(f);
   }  
   };
     
     var sortImages = function(){
-        var v = Ext.getCmp(sortId).getValue();
+    	if (!config.kaltura.partnerId) return;
+    	var v = Ext.getCmp(sortId).getValue();
         view.store.sort(v, v == 'title' ? 'asc' : 'desc');
     }
 
@@ -501,12 +514,7 @@ Ext.ux.MediaBrowser = function(config) {
            listeners: {
                'select': {fn:function(){sortImages()}, scope:this}
            }
-       }, new Ext.PagingToolbar({
-           store: store,       // grid and PagingToolbar using same store
-           displayInfo: false,
-           pageSize: 30,
-           prependButtons: true
-       }), ' ', '-'].concat((config.uploadURL ? [{
+       }, '-'].concat((config.uploadURL ? [{
            xtype: 'button',
            iconCls: 'z-media-browser-addmedia',
            text: 'Upload',
@@ -520,7 +528,13 @@ Ext.ux.MediaBrowser = function(config) {
        }] : []),['->', {
            xtype: 'tbindicator',
            id: indicatorId
-       }, ' '])
+       }, ' ']),
+       bbar: [new Ext.PagingToolbar({
+           store: store,       // grid and PagingToolbar using same store
+           displayInfo: false,
+           pageSize: 30,
+           prependButtons: true
+       })], 
    }]
     });
 
