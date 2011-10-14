@@ -7,7 +7,7 @@ KalturaProxy = function (conn)
                 Ext.apply(this, conn);
            };
 
-Ext.extend(KalturaProxy, Ext.data.DataProxy, 
+Ext.extend(KalturaProxy, Ext.data.DataProxy,
 {
 
      ensureSession: function (callback)
@@ -15,7 +15,7 @@ Ext.extend(KalturaProxy, Ext.data.DataProxy,
         var proxyWrapper = this;
         if (proxyWrapper.kConfig && proxyWrapper.kConfig.ks)
             return callback();
-        
+
         function startSession(){
             proxyWrapper.kConfig = new KalturaConfiguration(parseInt(proxyWrapper.partnerId));
             proxyWrapper.kConfig.serviceUrl = proxyWrapper.serviceUrl;
@@ -32,24 +32,24 @@ Ext.extend(KalturaProxy, Ext.data.DataProxy,
         startSession();
 
      },
-    
+
      load : function (params, reader, callback, scope, arg)
             {
                var userContext = {
-                                    callback: callback, 
-                                    reader: reader, 
-                                    arg: arg, 
+                                    callback: callback,
+                                    reader: reader,
+                                    arg: arg,
                                     scope: scope
                                  };
                var proxyWrapper = this;
 
-               var kalturaCallback = function(success, data) 
-                { 
+               var kalturaCallback = function(success, data)
+                {
                    if (!success)
                        return proxyWrapper.handleErrorResponse(data, userContext)
-                   proxyWrapper.loadResponse(data, userContext); 
+                   proxyWrapper.loadResponse(data, userContext);
                 }
-                   
+
                function listEntries(start, limit, filterKey, filterValue, orderBy, success, error) {
                    var entryFilter = new KalturaBaseEntryFilter();
                    if (filterKey && filterKey != '' && filterValue != '')
@@ -66,25 +66,25 @@ Ext.extend(KalturaProxy, Ext.data.DataProxy,
                    }
                    proxyWrapper.kClient.media.listAction(kalturaCallback, entryFilter, kalturaPager);
                }
-               
+
                this.ensureSession(function() {
                    //Handles the response we get back from the web service call
                    listEntries(params.start, params.limit, params.filterKey, params.filterValue, (params.dir == 'ASC') ? '':'-' + params.sort )
                })
             },
-            
+
      handleErrorResponse : function(response, userContext)
                            {
                               alert("Error while calling web service method:" + $.toJSON(response));
                            },
- 
+
      loadResponse : function (response, userContext, methodName)
                     {
                         var result = userContext.reader.readRecords(response);
                         userContext.callback.call(userContext.scope, result, userContext.arg, true);
                     }
-        
-}); 
+
+});
 
 Ext.ux.MediaBrowser = function(config) {
 
@@ -238,7 +238,7 @@ Ext.ux.MediaBrowser = function(config) {
                         failure: uploadFailure.createDelegate(this),
                         score: this
                     });
-		    
+
                 }}},{
 		    text: 'Reset',
 		    scope: this,
@@ -329,7 +329,7 @@ Ext.ux.MediaBrowser = function(config) {
         });
      store.load({            params: {
          // specify params for the first page load if using paging
-         start: 0,          
+         start: 0,
          limit: 30
      }})
     }
@@ -339,7 +339,7 @@ Ext.ux.MediaBrowser = function(config) {
             root: 'images',
             autoLoad: false,
             fields: [
-                     {name:'id', mapping:'name'}, 
+                     {name:'id', mapping:'name'},
                      'name', {name:'title', mapping:'name'},
                      {name:'description', mapping:'name'},
                      {name:'type', defaultValue:'flv'},
@@ -358,12 +358,12 @@ Ext.ux.MediaBrowser = function(config) {
               });
         store.load({            params: {
             // specify params for the first page load if using paging
-            start: 0,          
+            start: 0,
             limit: 30
         }})
     }
     else if (config.kaltura.partnerId && config.kaltura.adminSecret) {
-        
+
         store = new Ext.data.JsonStore({
             proxy: new KalturaProxy({partnerId: config.kaltura.partnerId,
                                  secret: config.kaltura.adminSecret,
@@ -374,8 +374,8 @@ Ext.ux.MediaBrowser = function(config) {
             idProperty: 'id',
             root: 'objects',
             autoLoad: false,
-            fields: ['id', 
-                     'name', 
+            fields: ['id',
+                     'name',
                      {name:'title', mapping:'name'},
                      {name:'description', defaultValue:''},
                      {name:'type', mapping:'dummy', defaultValue:'flv'},
@@ -395,7 +395,7 @@ Ext.ux.MediaBrowser = function(config) {
         store.load({
             params: {
             // specify params for the first page load if using paging
-            start: 0,          
+            start: 0,
             limit: 30
         }
     })
@@ -451,7 +451,7 @@ Ext.ux.MediaBrowser = function(config) {
   var filter = Ext.getCmp(filterId);
   if (typeof view.store.proxy== 'object' && view.store.proxy.constructor == KalturaProxy) {
       view.store.load({params:{filterKey:'searchTextMatchAnd', filterValue:filter.getValue(),
-                               start: 0,          
+                               start: 0,
                                limit: 30}});
   }
   else {
@@ -460,9 +460,9 @@ Ext.ux.MediaBrowser = function(config) {
 			f = {property:'name', value:filter.getValue()}
 		view.store.filter(f);
 	 view.store.filter(f);
-  }  
+  }
   };
-    
+
     var sortImages = function(){
     	if (!config.kaltura.partnerId) return;
     	var v = Ext.getCmp(sortId).getValue();
@@ -534,7 +534,7 @@ Ext.ux.MediaBrowser = function(config) {
            displayInfo: false,
            pageSize: 30,
            prependButtons: true
-       })], 
+       })]
    }]
     });
 

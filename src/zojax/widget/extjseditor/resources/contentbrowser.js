@@ -91,8 +91,8 @@ Ext.ux.ContentBrowser = function(config) {
   listeners: {
       'click': {fn: doClick, scope: this},
       'dblclick': {fn: doCallback, scope: this},
-      'loadexception': {fn: onLoadException, scope: this},
-  },
+      'loadexception': {fn: onLoadException, scope: this}
+  }
     });
   view.getLoader().load(view.root);
     // create filter to easily search medias
@@ -100,7 +100,7 @@ Ext.ux.ContentBrowser = function(config) {
   var filter = Ext.getCmp(filterId);
   //view.store.filter('name', filter.getValue());
   };
-    
+
     var sortContent = function(){
         var v = Ext.getCmp(sortId).getValue();
         //view.store.sort(v, v == 'title' ? 'asc' : 'desc');

@@ -6,7 +6,7 @@ Ext.ux.ImageBrowser = function(config) {
 
     // cache data by image name for easy lookup
     var lookup = {};
-  
+
     // currently selected image data
     var data;
 
@@ -68,7 +68,7 @@ Ext.ux.ImageBrowser = function(config) {
 	tag: 'form',
 	cls: 'x-hidden'
     });
-    
+
     // called if image was uploaded successfully
     var uploadSuccess = function(dialog, filename, response) {
     	indicatorOff();
@@ -90,7 +90,7 @@ Ext.ux.ImageBrowser = function(config) {
     	d.on('uploadfailed', uploadFailure);
     	d.show();
     };
-    
+
     // delete an image file
     var deleteImage = function(doDelete) {
 	indicatorOn();
@@ -107,14 +107,14 @@ Ext.ux.ImageBrowser = function(config) {
 	    });
 	}
     };
-    
+
     // confirm if ok to delete image
     var confirmDelete = function() {
 	Ext.MessageBox.confirm("Delete Image",
-			       "Are you sure that you wish to delete " + 
+			       "Are you sure that you wish to delete " +
 			       data.name + "?", deleteImage, this);
     };
-    
+
     // create template for image thumbnails
     var thumbTemplate = new Ext.XTemplate(
 	'<tpl for=".">',
@@ -125,7 +125,7 @@ Ext.ux.ImageBrowser = function(config) {
 	'</tpl>'
     );
     thumbTemplate.compile();
-    
+
     // create json store for loading image data
     var store = new Ext.data.JsonStore({
 	url: config.listURL,
@@ -147,10 +147,10 @@ Ext.ux.ImageBrowser = function(config) {
     });
     store.load({            params: {
             // specify params for the first page load if using paging
-            start: 0,          
+            start: 0,
             limit: 30
 }});
-    
+
     // called when image selection is changed
     var selectionChanged = function() {
 	var selNode = view.getSelectedNodes();
@@ -162,7 +162,7 @@ Ext.ux.ImageBrowser = function(config) {
 	    this.callback({});
 	}
     };
-    
+
     // perform callback to parent function
     var doCallback = function() {
 	if (this.callback) {
@@ -174,7 +174,7 @@ Ext.ux.ImageBrowser = function(config) {
     var onLoadException = function(v,o) {
 	view.getEl().update('<div style="padding:10px;">Error loading images.</div>');
     };
-    
+
     // create Ext.DataView to display thumbnails
     var view = new Ext.DataView({
 	tpl: thumbTemplate,
@@ -204,12 +204,12 @@ Ext.ux.ImageBrowser = function(config) {
 		f = {property:'name', value:filter.getValue()}
 	view.store.filter(f);
 	};
-    
+
     var sortImages = function(){
         var v = Ext.getCmp(sortSelectId).getValue();
         view.store.sort(v, v == 'title' ? 'asc' : 'desc');
     }
-    
+
     // apply additional config values
     Ext.applyIf(config, {
 	layout: 'fit',
@@ -271,7 +271,7 @@ Ext.ux.ImageBrowser = function(config) {
 		   }, '->', {
 		       xtype: 'tbindicator',
 		       id: indicatorId,
-		       ctCls: 'x-tbar-loading',
+		       ctCls: 'x-tbar-loading'
 		   }, ' '],
 		bbar: [new Ext.PagingToolbar({
 	           store: store,       // grid and PagingToolbar using same store
@@ -283,7 +283,7 @@ Ext.ux.ImageBrowser = function(config) {
     });
     // call Ext.Window constructor passing config
     Ext.ux.ImageBrowser.superclass.constructor.call(this, config);
-    
+
     // refresh the image list
     this.reset = function() {
 	view.getEl().dom.parentNode.scrollTop = 0;
@@ -302,7 +302,7 @@ Ext.extend(Ext.ux.ImageBrowser, Ext.Panel, {
 	  if (this.rendered) {
 	  this.reset();
       }
-      
+
       // call Ext.Window.show
       Ext.ux.ImageBrowser.superclass.show.call(this, animateTarget, cb, scope);
   }
