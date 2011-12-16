@@ -1,0 +1,69 @@
+##############################################################################
+#
+# Copyright (c) 2003-2004 Zope Corporation and Contributors.
+# All Rights Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
+msgid ""
+msgstr ""
+"Project-Id-Version: Development/Unknown\n"
+"POT-Creation-Date: Thu Dec  8 23:35:44 2011\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Zope 3 Developers <zope3-dev@zope.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: zope/app/locales/extract.py\n"
+
+#: src/zojax/widget/extjseditor/interfaces.py:29
+msgid "Media API URL"
+msgstr ""
+
+#: src/zojax/widget/extjseditor/interfaces.py:32
+msgid "Kaltura Partner Id"
+msgstr ""
+
+#: src/zojax/widget/extjseditor/interfaces.py:35
+msgid "Kaltura User Secret"
+msgstr ""
+
+#: src/zojax/widget/extjseditor/interfaces.py:38
+msgid "Kaltura Admin Secret"
+msgstr ""
+
+#: src/zojax/widget/extjseditor/interfaces.py:41
+msgid "Kaltura Service URL"
+msgstr ""
+
+#: src/zojax/widget/extjseditor/interfaces.py:45
+msgid "Kaltura Service Base"
+msgstr ""
+
+#: src/zojax/widget/extjseditor/interfaces.py:49
+msgid "Kaltura User Id"
+msgstr ""
+
+#: src/zojax/widget/extjseditor/interfaces.py:53
+msgid "Max Image Width"
+msgstr ""
+
+#: src/zojax/widget/extjseditor/interfaces.py:54
+msgid "The maximum width of the image is inserted via the wysiwyg-editor"
+msgstr ""
+
+#: src/zojax/widget/extjseditor/interfaces.py:58
+msgid "Max Image Height"
+msgstr ""
+
+#: src/zojax/widget/extjseditor/interfaces.py:59
+msgid "The maximum height of the image is inserted via the wysiwyg-editor"
+msgstr ""
+
