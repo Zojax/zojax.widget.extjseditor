@@ -323,7 +323,9 @@ Ext.ux.MediaBrowser = function(config) {
       ],
       listeners: {
           'beforeload': {fn: indicatorOn, scope: this},
-          'load': {fn: function() {indicatorOff(); sortImages()}, scope: this},
+          'load': {fn: function() {indicatorOff();
+                                   //sortImages()
+                                   }, scope: this},
           'loadexception': {fn: indicatorOff, scope: this}
       }
         });
@@ -388,7 +390,7 @@ Ext.ux.MediaBrowser = function(config) {
             ],
             listeners: {
                 'beforeload': {fn: indicatorOn, scope: this},
-                'load': {fn: function() {indicatorOff(); sortImages()}, scope: this},
+                'load': {fn: function() {indicatorOff();}, scope: this},
                 'loadexception': {fn: indicatorOff, scope: this}
             }
               });
@@ -464,7 +466,7 @@ Ext.ux.MediaBrowser = function(config) {
   };
 
     var sortImages = function(){
-    	if (!config.kaltura.partnerId) return;
+    	//if (!config.kaltura.partnerId) return;
     	var v = Ext.getCmp(sortId).getValue();
         view.store.sort(v, v == 'title' ? 'asc' : 'desc');
     }

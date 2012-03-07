@@ -45,6 +45,14 @@
     <resource path="extjs-editor/loadingindicator.js" />
     <resource path="extjs-editor/statictextfield.js" />
 
+    <resource path="extjs-editor/client/webtoolkit.md5.js" />
+    <resource path="extjs-editor/client/ox.ajast.js" />
+    <resource path="extjs-editor/client/KalturaClientBase.js" />
+    <resource path="extjs-editor/client/KalturaTypes.js" />
+    <resource path="extjs-editor/client/KalturaVO.js" />
+    <resource path="extjs-editor/client/KalturaServices.js" />
+    <resource path="extjs-editor/client/KalturaClient.js" />
+
   </zojax:resourcepackage>
 
   <zojax:resourcepackage

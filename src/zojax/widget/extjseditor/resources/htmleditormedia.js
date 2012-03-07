@@ -348,7 +348,8 @@ Ext.ux.HTMLEditorMedia = function(config) {
           });
       }
 
-      if (config.kaltura.partnerId && config.kaltura.adminSecret && typeof KalturaSessionType != "undefined") {
+      if (config.kaltura.partnerId && config.kaltura.adminSecret && typeof KalturaSessionType != "undefined"
+          ) {
           mediaBrowserKaltura = new Ext.ux.MediaBrowser({
                     frame: false,
                     border: false,
