@@ -183,6 +183,7 @@ Ext.ux.MediaBrowser = function(config) {
     var indicatorOn = function() {
   if (Ext.getCmp(myid) && Ext.getCmp(myid).getTopToolbar().items) {
       Ext.getCmp(myid).getTopToolbar().items.map[indicatorId].disable();
+      view.disable();
     }
     };
 
@@ -190,6 +191,7 @@ Ext.ux.MediaBrowser = function(config) {
     var indicatorOff = function() {
   if (Ext.getCmp(myid) && Ext.getCmp(myid).getTopToolbar().items) {
       Ext.getCmp(myid).getTopToolbar().items.map[indicatorId].enable();
+      view.enable();
     }
     };
 
@@ -500,12 +502,7 @@ Ext.ux.MediaBrowser = function(config) {
             }),
             reader: new CustomJsonReader(config),
             idProperty: 'id',
-            //root: 'assets',
             autoLoad: false,
-            /*paramNames: {
-                start : 'page',  // The parameter name which specifies the start row
-                limit : 'per_page',
-            },*/
             totalProperty: function() {return 3000;},
             fields: ['id',
                 'name',
@@ -513,7 +510,6 @@ Ext.ux.MediaBrowser = function(config) {
                 {name:'description', mapping:'description'},
                 {name:'type', mapping:'type', defaultValue:'flv'},
                 {name:'autoplay', defaultValue: false},
-//                {name:'results', defaultValue: 10000},
                 {name:'modified', mapping:'updated'},
                 {name:'thumbnail', mapping:'thumbnail'},
                 {name:'assets', mapping:'assets'},
