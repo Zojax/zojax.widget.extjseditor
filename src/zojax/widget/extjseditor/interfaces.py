@@ -58,3 +58,19 @@ class IExtJsEditor(interface.Interface):
                         title=_('Max Image Height'),
                         description=_('The maximum height of the image is inserted via the wysiwyg-editor'),
                         default=360)
+#
+    wistiaApiUsername = schema.TextLine(title=_('Wistia API Username'),
+                                default = u'api',
+                                required = False,)
+
+    wistiaApiPassword = schema.TextLine(title=_('Wistia API Password'),
+                                default = u'4fe1a26e3c0d47107becf5223870ec81f70a9c2d',
+                                required = False,)
+
+    wistiaBaseApiUrl = schema.TextLine(title=_('Wistia Base API URL'),
+                        default = u'https://api.wistia.com/v1/',
+                        required = False,)
+
+    wistiaApiProxyUrl = schema.TextLine(title=_('Wistia API Proxy URL'),
+        default = u'/WistiaJsAPI/',
+        required = False,)

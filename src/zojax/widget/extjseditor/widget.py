@@ -113,7 +113,8 @@ class ExtJSEditorWidget(textarea.TextAreaWidget):
                                                                   adminSecret=configlet.kalturaAdminSecret,
                                                                   serviceUrl=configlet.kalturaServiceUrl,
                                                                   serviceBase=configlet.kalturaServiceBase,
-                                                                  userId=configlet.kalturaUserId)
+                                                                  userId=configlet.kalturaUserId),
+                                                     wistia = dict(mediaPath=configlet.wistiaApiProxyUrl)
                                                      )),
                 'linkConfig': simplejson.dumps(dict(contentUrl=contentUrl, rootTitle=IItem(site).title)),
                 'imgmax': dict(width=configlet.imageMaxWidth,

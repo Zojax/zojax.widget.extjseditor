@@ -1,0 +1,19 @@
+<configure
+   xmlns="http://namespaces.zope.org/zope"
+   xmlns:zojax="http://namespaces.zope.org/zojax"
+   xmlns:browser="http://namespaces.zope.org/browser"
+   >
+
+
+  <!-- wistia js api proxy -->
+
+  <browser:page
+     name="WistiaJsAPI"
+     for="zope.app.component.interfaces.ISite"
+     class=".jsapi.WistiaApiProxy"
+     permission="zope.Public" />
+
+  <!-- permission="zojax.ModifyContent" -->
+
+
+</configure>

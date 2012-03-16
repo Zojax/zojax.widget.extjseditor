@@ -1,11 +1,42 @@
 // Ext.ux.MediaBrowser
 // an media browser for the Ext.ux.HtmlEditorMedia plugin
 
+function replaceQueryString(url, param, value) {
+    var re = new RegExp("([?|&])" + param + "=.*?(&|$)","i");
+    if (url.match(re))
+        return url.replace(re,'$1' + param + "=" + value + '$2');
+    else
+        return url + '&' + param + "=" + value;
+}
+
+function thumbnailise(width, height) {
+    if (width > height) {
+        if (width < 80) {
+            return [width, height]
+        } else {
+            return [80, height / width * 80]
+        }
+    } else {
+        if (height < 80) {
+            return [width, height]
+        } else {
+            return [width / height * 80, 80]
+        }
+    }
+}
+
+
 KalturaProxy = function (conn)
            {
                 KalturaProxy.superclass.constructor.call(this);
                 Ext.apply(this, conn);
            };
+
+WistiaProxy = function (conn)
+{
+    WistiaProxy.superclass.constructor.call(this);
+    Ext.apply(this, conn);
+};
 
 Ext.extend(KalturaProxy, Ext.data.DataProxy,
 {
@@ -86,6 +117,51 @@ Ext.extend(KalturaProxy, Ext.data.DataProxy,
 
 });
 
+Ext.extend(WistiaProxy, Ext.data.DataProxy,
+    {
+
+        ensureSession: function (callback)
+        {
+            var proxyWrapper = this;
+            if (proxyWrapper.kConfig && proxyWrapper.kConfig.ks)
+                return callback();
+
+            function startSession(){
+            }
+            function sessionStarted(success, data) {
+            }
+            startSession();
+
+        },
+
+        doRequest : function(action, rs, params, reader, callback, scope, options) {
+            // default implementation of doRequest for backwards compatibility with 2.0 proxies.
+            // If we're executing here, the action is probably "load".
+            // Call with the pre-3.0 method signature.
+            console.log(action, rs, params, reader, callback, scope, options)
+        },
+
+        handleErrorResponse : function(response, userContext)
+        {
+        },
+
+        loadResponse : function (response, userContext, methodName)
+        {
+        }
+
+    });
+
+CustomJsonReader = function(meta, recordType) {
+
+    CustomJsonReader.superclass.constructor.call(this, meta, recordType || meta.fields);
+
+}
+
+Ext.extend(CustomJsonReader, Ext.data.JsonReader, {
+
+
+});
+
 Ext.ux.MediaBrowser = function(config) {
 
     // PRIVATE
@@ -119,30 +195,44 @@ Ext.ux.MediaBrowser = function(config) {
 
     // format loaded media data
     var formatData = function(data) {
-  data.label = (data.title.length > 15)
-      ? data.name.substr(0, 12) + '...' : data.title;
-    data.tip = "Title: " + data.title +
+
+        data.label = (data.title.length > 15) ? data.name.substr(0, 12) + '...' : data.title;
+        if (!data.preview && data.thumbnail && data.assets) {
+            // dealing with wistia
+            if (data.thumbnail.url.search("image_crop_resized") != -1){
+                data.preview = replaceQueryString(data.thumbnail.url, "image_crop_resized", "80x80");
+                data.thumbwidth = 80;
+                data.thumbheight = 80;
+            } else {
+                data.preview = data.thumbnail.url;
+                var thumb = thumbnailise(data.thumbnail.width, data.thumbnail.height);
+                data.thumbwidth = thumb[0];
+                data.thumbheight = thumb[1];
+            }
+            var flvi = 0;
+            for (var i in data.assets) {
+                if (data.assets[i].type == "FlashVideoFile")
+                    flvi = i;
+            }
+            data.size = data.assets[flvi].fileSize;
+            data.url = data.assets[flvi].url;
+            data.width = data.assets[flvi].width;
+            data.height = data.assets[flvi].height;
+            data.type = "wistia."+data.type.toLowerCase();
+        }
+
+        data.tip = "Title: " + data.title +
         "<br/>Description: " + data.alt +
         "<br/>Dimensions: " + data.width + " x " + data.height +
         "<br/>Size: " + ((data.size < 1024) ? data.size + " bytes"
             : (Math.round(((data.size * 10) / 1024)) / 10) + " KB");
-    if (data.width > data.height) {
-        if (data.width < 80) {
-        data.thumbwidth = data.width;
-        data.thumbheight = data.height;
-        } else {
-        data.thumbwidth = 80;
-        data.thumbheight = 80 / data.width * data.height;
-          }
-    } else {
-        if (data.height < 80) {
-        data.thumbwidth = data.width;
-        data.thumbheight = data.height;
-        } else {
-        data.thumbwidth = 80 / data.height * data.width;
-        data.thumbheight = 80;
-          }
-    }
+
+        if (!data.thumbwidth && !data.thumbheight) {
+            var thumb = thumbnailise(data.width, data.height);
+            data.thumbwidth = thumb[0];
+            data.thumbheight = thumb[1];
+        }
+
   data.thumbleft = (Math.round((90 - data.thumbwidth) / 2)) + "px";
   data.thumbtop = "5px";
   data.thumbwidth = Math.round(data.thumbwidth) + "px";
@@ -364,7 +454,7 @@ Ext.ux.MediaBrowser = function(config) {
             limit: 30
         }})
     }
-    else if (config.kaltura.partnerId && config.kaltura.adminSecret) {
+    else if (config.kaltura && config.kaltura.partnerId && config.kaltura.adminSecret) {
 
         store = new Ext.data.JsonStore({
             proxy: new KalturaProxy({partnerId: config.kaltura.partnerId,
@@ -401,6 +491,49 @@ Ext.ux.MediaBrowser = function(config) {
             limit: 30
         }
     })
+    }
+    else if (config.wistia) {
+        store = new Ext.data.JsonStore({
+            proxy : new Ext.data.HttpProxy({
+                method: 'GET',
+                url: config.wistia.mediaPath
+            }),
+            reader: new CustomJsonReader(config),
+            idProperty: 'id',
+            //root: 'assets',
+            autoLoad: false,
+            /*paramNames: {
+                start : 'page',  // The parameter name which specifies the start row
+                limit : 'per_page',
+            },*/
+            totalProperty: function() {return 3000;},
+            fields: ['id',
+                'name',
+                {name:'title', mapping:'name'},
+                {name:'description', mapping:'description'},
+                {name:'type', mapping:'type', defaultValue:'flv'},
+                {name:'autoplay', defaultValue: false},
+//                {name:'results', defaultValue: 10000},
+                {name:'modified', mapping:'updated'},
+                {name:'thumbnail', mapping:'thumbnail'},
+                {name:'assets', mapping:'assets'},
+                {name:'embed', mapping:'embedCode'},
+                {name:'media_id', mapping:'id'}
+
+            ],
+            listeners: {
+                'beforeload': {fn: indicatorOn, scope: this},
+                'load': {fn: function() {indicatorOff();}, scope: this},
+                'loadexception': {fn: indicatorOff, scope: this}
+            }
+        });
+        store.load({
+            params: {
+                // specify params for the first page load if using paging
+                start: 0,
+                limit: 30
+            }
+        })
     }
 
     // called when media selection is changed
@@ -535,7 +668,8 @@ Ext.ux.MediaBrowser = function(config) {
            store: store,       // grid and PagingToolbar using same store
            displayInfo: false,
            pageSize: 30,
-           prependButtons: true
+           prependButtons: true,
+           afterPageText: ""
        })]
    }]
     });

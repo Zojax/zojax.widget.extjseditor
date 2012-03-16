@@ -75,4 +75,7 @@
      schema=".interfaces.IExtJsEditor"
      class=".configlet.ExtJsConfiglet" />
 
+  <!-- browser views -->
+  <include package=".browser" />
+
 </configure>
