@@ -64,7 +64,7 @@ class IExtJsEditor(interface.Interface):
                                 required = False,)
 
     wistiaApiPassword = schema.TextLine(title=_('Wistia API Password'),
-                                default = u'4fe1a26e3c0d47107becf5223870ec81f70a9c2d',
+                                default = u'50fe24d3645fd924b3b2ce55aa061273104ecb40',
                                 required = False,)
 
     wistiaBaseApiUrl = schema.TextLine(title=_('Wistia Base API URL'),
