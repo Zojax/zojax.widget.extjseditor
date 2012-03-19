@@ -44,4 +44,5 @@ parts/
 .mr.developer.cfg
 .pydevproject
 .project
+.idea/
 commit.txt
