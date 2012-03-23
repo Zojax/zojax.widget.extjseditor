@@ -85,7 +85,7 @@ Ext.ux.ImageBrowser = function(config) {
     // upload a new image file
     var uploadFile = function(record) {
     	indicatorOff();
-    	var d = new Ext.ux.UploadDialog.Dialog({url: this.uploadURL});
+    	var d = new Ext.ux.UploadDialog.Dialog({url: this.uploadURL, upload_autostart: config.autoUpload});
     	d.on('uploadsuccess', uploadSuccess);
     	d.on('uploadfailed', uploadFailure);
     	d.show();

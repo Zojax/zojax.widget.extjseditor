@@ -74,3 +74,7 @@ class IExtJsEditor(interface.Interface):
     wistiaApiProxyUrl = schema.TextLine(title=_('Wistia API Proxy URL'),
         default = u'/WistiaJsAPI/',
         required = False,)
+
+    multiplyUpload = schema.Bool(title=_('Alow image browser auto upload'),
+        default = True,
+        required = False,)
