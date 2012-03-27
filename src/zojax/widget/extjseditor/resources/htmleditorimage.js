@@ -1,6 +1,6 @@
 // Ext.ux.HTMLEditorImage
 // a plugin to handle images in the Ext.ux.HtmlEditor
-Ext.ux.HTMLEditorImage = function(url1, url2, imgmax) {
+Ext.ux.HTMLEditorImage = function(url1, url2, imgmax, autoUpload) {
 
     // pointer to Ext.ux.HTMLEditor
     var editor;
@@ -309,6 +309,7 @@ Ext.ux.HTMLEditorImage = function(url1, url2, imgmax) {
                     listURL: baseUrl2 + 'listing',
                     uploadURL: baseUrl2 + 'upload',
                     deleteURL: baseUrl2 + 'remove',
+                    autoUpload: autoUpload,
 
         // set the callback from the image browser
                     callback: setImageDetails

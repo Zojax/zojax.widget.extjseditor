@@ -46,7 +46,7 @@ Ext.EventManager.onDocumentReady(function(){
        enableLinks: false,
        id:'cmp-%(id)s',
        plugins: [new Ext.ux.HTMLEditorLink(%(linkConfig)s),
-       new Ext.ux.HTMLEditorImage('%(url1)s', '%(url2)s', %(imgmax)s),
+       new Ext.ux.HTMLEditorImage('%(url1)s', '%(url2)s', %(imgmax)s, %(multiplyUpload)s),
        new Ext.ux.HTMLEditorMedia(%(mediaConfig)s)
        ]})
     });
@@ -98,7 +98,6 @@ class ExtJSEditorWidget(textarea.TextAreaWidget):
         if contextId:
             contentUrl = '%s/@@content.browser/%s/contentManagerAPI/'%(siteUrl, contextId)
         configlet = getUtility(IExtJsEditor)
-        includeInplaceSource('<script type="text/javascript" src="http://apis.kaltura.org/kalturaJsClient/kaltura.min.js.php"></script>', ('extjs-widgets',))
         includeInplaceSource(jssource%{
                 'id': self.id,
                 'width': repr(self.style_width),
@@ -116,7 +115,8 @@ class ExtJSEditorWidget(textarea.TextAreaWidget):
                                                                   userId=configlet.kalturaUserId),
                                                      wistia = dict(mediaPath=configlet.wistiaApiProxyUrl)
                                                      )),
-                'linkConfig': simplejson.dumps(dict(contentUrl=contentUrl, rootTitle=IItem(site).title)),
+                'linkConfig': simplejson.dumps(dict(contentUrl=contentUrl, rootTitle=getattr(IItem(site, None),'title',''))),
+                'multiplyUpload': str(configlet.multiplyUpload).lower(),
                 'imgmax': dict(width=configlet.imageMaxWidth,
                                height=configlet.imageMaxHeight),
                 }, ('extjs-widgets',))

@@ -273,8 +273,9 @@ Ext.ux.UploadDialog.BrowseButton = Ext.extend(Ext.Button,
    */
   onRender : function(ct, position)
   {
-    Ext.ux.UploadDialog.BrowseButton.superclass.onRender.call(this, ct, position);
-    this.createInputFile();
+      Ext.ux.UploadDialog.BrowseButton.superclass.onRender.call(this, ct, position);
+      this.createInputFile();
+
   },
   
   /**
@@ -287,6 +288,7 @@ Ext.ux.UploadDialog.BrowseButton = Ext.extend(Ext.Button,
        this.wrap = this.el.wrap({cls:'tbody'});    
        this.input_file = this.wrap.createChild({
            tag: 'input',
+           cls: 'input_file',
             type: 'file',
             size: 1,
             name: this.input_name || Ext.id(this.el),
@@ -302,8 +304,8 @@ Ext.ux.UploadDialog.BrowseButton = Ext.extend(Ext.Button,
     if (Ext.isIE) {
       adj = {x: 0, y: 3}
     }
-    
-    this.input_file.setLeft(button_box.width - input_box.width + adj.x + 'px');
+
+    this.input_file.setLeft(button_box.width - input_box.width + 20 +adj.x + 'px');
     this.input_file.setTop(button_box.height - input_box.height + adj.y + 'px');
     this.input_file.setOpacity(0.0);
         
@@ -322,9 +324,16 @@ Ext.ux.UploadDialog.BrowseButton = Ext.extend(Ext.Button,
       }
     
     this.input_file.on('change', this.onInputFileChange, this);
-    this.input_file.on('click', function(e) { e.stopPropagation(); }); 
+    this.input_file.on('click', function(e) { e.stopPropagation(); });
+
+
   },
-  
+
+  afterRender: function(){
+    Ext.ux.UploadDialog.BrowseButton.superclass.afterRender.call(this);
+    var inputFile = document.getElementById(this.input_file.id);
+    inputFile.click();
+  },
   /**
    * @access public
    */
@@ -915,6 +924,7 @@ Ext.extend(Ext.ux.UploadDialog.Dialog, Ext.Window, {
       handler: this.onCloseButtonClick,
       scope: this
     });
+
   },
   
   renderStateCell : function(data, cell, record, row_index, column_index, store)
