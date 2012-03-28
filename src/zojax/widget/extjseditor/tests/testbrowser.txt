@@ -106,7 +106,7 @@ Let's edit content, editor includes js to head and includes extjs.js
 Let's turn off autoupload images
 
     >>> user.open('http://localhost/settings/system/contenteditor/extjs/')
-    >>> user.getControl(name="form.widgets.multiplyUpload:list").value = ['false']
+    >>> user.getControl(name="form.widgets.autoUpload:list").value = ['false']
     >>> user.getControl('Save').click()
 
     >>> user.open('http://localhost/page/context.html')
@@ -184,44 +184,3 @@ let's check result text
     True
 
     >>> setSite(None)
-
-Upload image
-----------------------
-
-Porst without data
-    >>> id = root['ids'].getId(root['page'])
-    >>> user.post('http://127.0.0.1/@@content.attachments/'+ str(id) +'/imageManagerAPI/upload', '')
-    >>> print user.contents
-    {"message": "", "success": false, "error": "No image provided"}
-
-Post with incorrect data
-
-    >>> from ClientForm import HTMLForm
-    >>> from zope.testbrowser.browser import Form
-
-    >>> import os.path
-    >>> text_file_path = os.path.join(os.path.split(__file__)[0], 'resources/test.txt')
-    >>> img_file_path = os.path.join(os.path.split(__file__)[0], 'resources/zope.gif')
-
-    >>> form = HTMLForm(action = 'http://127.0.0.1/@@content.attachments/'+ str(id) +'/imageManagerAPI/upload/', method="POST", enctype="multipart/form-data")
-    >>> form.new_control('file','file', {'name' : 'file', 'label': 'file'})
-    >>> form.new_control('submit','upload', {'name' : 'Upload', 'label': 'Upload'})
-    >>> browser_form = Form(user, form)
-    >>> file_ctrl = browser_form.getControl(name = 'file')
-    >>> file_ctrl.add_file(open(text_file_path), content_type ='text', filename='test.txt')
-    >>> browser_form = Form(user, form)
-    >>> browser_form.submit()
-    >>> print user.contents
-    {"message": "", "success": false, "error": "File is not image"}
-
-Post with correct data
-    >>> form = HTMLForm(action = 'http://127.0.0.1/@@content.attachments/'+ str(id) +'/imageManagerAPI/upload/', method="POST", enctype="multipart/form-data")
-    >>> form.new_control('file','file', {'name' : 'file', 'label': 'file'})
-    >>> form.new_control('submit','upload', {'name' : 'Upload', 'label': 'Upload'})
-    >>> browser_form = Form(user, form)
-    >>> file_ctrl = browser_form.getControl(name = 'file')
-    >>> file_ctrl.add_file(open(img_file_path), content_type ='image', filename='zope.gif')
-    >>> browser_form = Form(user, form)
-    >>> browser_form.submit()
-    >>> print user.contents
-    {"message": "", "file": "zope.gif", "success": true}
