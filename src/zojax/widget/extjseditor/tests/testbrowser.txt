@@ -67,16 +67,18 @@ Let's edit content, editor includes js to head and includes extjs.js
     <link rel="stylesheet" type="text/css" href="http://localhost/.../extjs.css" />
     <script type="text/javascript" src="http://localhost/.../extjs-widgets.js"></script>
     <link rel="stylesheet" type="text/css" href="http://localhost/.../extjs-widgets.css" />
-    <script type="text/javascript" src="http://apis.kaltura.org/kalturaJsClient/kaltura.min.js.php"></script>
     <script type="text/javascript">
     Ext.EventManager.onDocumentReady(function(){
+       $($('#form-widgets-text').attr('form')).submit(function() {var e = Ext.getCmp('cmp-form-widgets-text'); e.pushValue(); e.syncValue()});
        Ext.QuickTips.init();
-        var htmlEditor = new Ext.ux.HTMLEditor({
+        var htmlEditor = new Ext.form.HtmlEditor({
            width: 600, height: 300, applyTo: 'form-widgets-text',
            enableLinks: false,
-           plugins: [new Ext.ux.HTMLEditorLink({"contentUrl": "http://localhost/@@content.browser/.../contentManagerAPI/"}),
-           new Ext.ux.HTMLEditorImage('http://localhost/@@content.attachments/.../imageManagerAPI/', 'http://localhost/@@content.attachments/.../imageManagerAPI/'),
-           new Ext.ux.HTMLEditorMedia({"kaltura": {"serviceBase": "/api_v3/index.php?service=", "partnerId": null, "serviceUrl": "http://www.kaltura.com", "userSecret": null, "userId": null, "adminSecret": null}, "mediaAPIUrl": null, "mediaUrl1": "http://localhost/@@content.attachments/.../mediaManagerAPI/", "mediaUrl2": "http://localhost/@@content.attachments/.../mediaManagerAPI/"})]})
+           id:'cmp-form-widgets-text',
+           plugins: [new Ext.ux.HTMLEditorLink({"contentUrl": "http://localhost/@@content.browser/.../contentManagerAPI/", "rootTitle": ""}),
+           new Ext.ux.HTMLEditorImage('http://localhost/@@content.attachments/.../imageManagerAPI/', 'http://localhost/@@content.attachments/.../imageManagerAPI/', {'width': 480, 'height': 360}, true),
+           new Ext.ux.HTMLEditorMedia({"wistia": {"mediaPath": "/WistiaJsAPI/"}, "mediaAPIUrl": null, "mediaUrl1": "http://localhost/@@content.attachments/.../mediaManagerAPI/", "mediaUrl2": "http://localhost/@@content.attachments/.../mediaManagerAPI/", "kaltura": {"serviceBase": "/api_v3/index.php?service=", "partnerId": null, "serviceUrl": "http://www.kaltura.com", "userSecret": null, "userId": null, "adminSecret": null}})
+           ]})
         });
     </script>
     ...
@@ -92,11 +94,29 @@ Let's edit content, editor includes js to head and includes extjs.js
     ...
     </html>
 
+
+
     >>> user.getControl('Body').value = u'<div>Test page</div>'
     >>> user.getControl(name="content.edit.buttons.save").click()
 
     >>> print root['page'].text.cooked
     <div>Test page</div>
+
+
+Let's turn off autoupload images
+
+    >>> user.open('http://localhost/settings/system/contenteditor/extjs/')
+    >>> user.getControl(name="form.widgets.multiplyUpload:list").value = ['false']
+    >>> user.getControl('Save').click()
+
+    >>> user.open('http://localhost/page/context.html')
+    >>> print user.contents
+    <html>
+    ...
+           new Ext.ux.HTMLEditorImage('http://localhost/@@content.attachments/.../imageManagerAPI/', 'http://localhost/@@content.attachments/.../imageManagerAPI/', {'width': 480, 'height': 360}, false),
+    ...
+    </html>
+
 
 Check display widget
 
@@ -164,3 +184,44 @@ let's check result text
     True
 
     >>> setSite(None)
+
+Upload image
+----------------------
+
+Porst without data
+    >>> id = root['ids'].getId(root['page'])
+    >>> user.post('http://127.0.0.1/@@content.attachments/'+ str(id) +'/imageManagerAPI/upload', '')
+    >>> print user.contents
+    {"message": "", "success": false, "error": "No image provided"}
+
+Post with incorrect data
+
+    >>> from ClientForm import HTMLForm
+    >>> from zope.testbrowser.browser import Form
+
+    >>> import os.path
+    >>> text_file_path = os.path.join(os.path.split(__file__)[0], 'resources/test.txt')
+    >>> img_file_path = os.path.join(os.path.split(__file__)[0], 'resources/zope.gif')
+
+    >>> form = HTMLForm(action = 'http://127.0.0.1/@@content.attachments/'+ str(id) +'/imageManagerAPI/upload/', method="POST", enctype="multipart/form-data")
+    >>> form.new_control('file','file', {'name' : 'file', 'label': 'file'})
+    >>> form.new_control('submit','upload', {'name' : 'Upload', 'label': 'Upload'})
+    >>> browser_form = Form(user, form)
+    >>> file_ctrl = browser_form.getControl(name = 'file')
+    >>> file_ctrl.add_file(open(text_file_path), content_type ='text', filename='test.txt')
+    >>> browser_form = Form(user, form)
+    >>> browser_form.submit()
+    >>> print user.contents
+    {"message": "", "success": false, "error": "File is not image"}
+
+Post with correct data
+    >>> form = HTMLForm(action = 'http://127.0.0.1/@@content.attachments/'+ str(id) +'/imageManagerAPI/upload/', method="POST", enctype="multipart/form-data")
+    >>> form.new_control('file','file', {'name' : 'file', 'label': 'file'})
+    >>> form.new_control('submit','upload', {'name' : 'Upload', 'label': 'Upload'})
+    >>> browser_form = Form(user, form)
+    >>> file_ctrl = browser_form.getControl(name = 'file')
+    >>> file_ctrl.add_file(open(img_file_path), content_type ='image', filename='zope.gif')
+    >>> browser_form = Form(user, form)
+    >>> browser_form.submit()
+    >>> print user.contents
+    {"message": "", "file": "zope.gif", "success": true}
