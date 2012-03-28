@@ -75,6 +75,6 @@ class IExtJsEditor(interface.Interface):
         default = u'/WistiaJsAPI/',
         required = False,)
 
-    multiplyUpload = schema.Bool(title=_('Alow image browser auto upload'),
+    autoUpload = schema.Bool(title=_('Alow image browser auto upload'),
         default = True,
         required = False,)
