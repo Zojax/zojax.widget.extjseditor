@@ -52,7 +52,7 @@ Ext.extend(KalturaProxy, Ext.data.DataProxy,
             proxyWrapper.kConfig.serviceUrl = proxyWrapper.serviceUrl;
             proxyWrapper.kConfig.serviceBase = proxyWrapper.serviceBase;
             proxyWrapper.kClient = new KalturaClient(proxyWrapper.kConfig);
-            proxyWrapper.kClient.session.start(sessionStarted, proxyWrapper.secret, proxyWrapper.kalturaUserId, proxyWrapper.sessionType);
+            proxyWrapper.kClient.session.start(sessionStarted, proxyWrapper.secret, proxyWrapper.userId, proxyWrapper.sessionType);
         }
         function sessionStarted(success, data) {
             if (!success)
@@ -460,10 +460,11 @@ Ext.ux.MediaBrowser = function(config) {
 
         store = new Ext.data.JsonStore({
             proxy: new KalturaProxy({partnerId: config.kaltura.partnerId,
-                                 secret: config.kaltura.adminSecret,
-                                 serviceUrl: config.kaltura.serviceUrl,
-                                 serviceBase: config.kaltura.serviceBase,
-                                 sessionType: KalturaSessionType
+                                     secret: config.kaltura.adminSecret,
+                                     userId: config.kaltura.UserId,
+                                     serviceUrl: config.kaltura.serviceUrl,
+                                     serviceBase: config.kaltura.serviceBase,
+                                     sessionType: KalturaSessionType.ADMIN
                                 }),
             idProperty: 'id',
             root: 'objects',
