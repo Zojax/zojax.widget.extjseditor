@@ -72,29 +72,24 @@ class ExtJSEditorWidget(textarea.TextAreaWidget):
         else:
             value = unicode(self.value)
 
-        url1 = ''
-        url2 = ''
-        mediaUrl1 = ''
-        mediaUrl2 = ''
-        contentUrl = ''
+        url1 = url2 = mediaUrl1 = mediaUrl2 = contentUrl = ''
         site = getSite()
         ids = getUtility(IIntIds)
         siteUrl = absoluteURL(site, self.request)
         context = self.context
         contextId = ids.queryId(removeAllProxies(context))
-        if contextId is None:
-            context = site
-            contextId = ids.queryId(removeAllProxies(context))
+        #if contextId is None:
+        #    context = site
+        #    contextId = ids.queryId(removeAllProxies(context))
         if contextId and checkPermission('zojax.AddContentAttachment', context):
             url1 = '%s/@@content.attachments/%s/imageManagerAPI/'%(siteUrl, contextId)
             mediaUrl1 = '%s/@@content.attachments/%s/mediaManagerAPI/'%(siteUrl, contextId)
-
+        
         space = IPersonalSpace(self.request.principal, None)
-        if space is not None and    checkPermission('zojax.AddContentAttachment', space):
-            url2 = '%s/@@content.attachments/%s/imageManagerAPI/'%(
-                siteUrl, ids.getId(space))
-            mediaUrl2 = '%s/@@content.attachments/%s/mediaManagerAPI/'%(
-                siteUrl, ids.getId(space))
+        if space is not None and checkPermission('zojax.AddContentAttachment', space):
+            spaceId = ids.getId(space)
+            url2 = '%s/@@content.attachments/%s/imageManagerAPI/'%(siteUrl, spaceId)
+            mediaUrl2 = '%s/@@content.attachments/%s/mediaManagerAPI/'%(siteUrl, spaceId)
         if contextId:
             contentUrl = '%s/@@content.browser/%s/contentManagerAPI/'%(siteUrl, contextId)
         configlet = getUtility(IExtJsEditor)
@@ -106,7 +101,6 @@ class ExtJSEditorWidget(textarea.TextAreaWidget):
                 'url2': url2,
                 'mediaConfig': simplejson.dumps(dict(mediaUrl1=mediaUrl1,
                                                      mediaUrl2=mediaUrl2,
-                                                     mediaAPIUrl=configlet.mediaAPIURL,
                                                      kaltura=dict(partnerId=configlet.kalturaPartnerId,
                                                                   userSecret=configlet.kalturaUserSecret,
                                                                   adminSecret=configlet.kalturaAdminSecret,
