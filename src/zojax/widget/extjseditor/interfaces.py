@@ -26,9 +26,6 @@ _ = MessageFactory('zojax.widget.extjseditor')
 class IExtJsEditor(interface.Interface):
     """ rich text field """
 
-    mediaAPIURL = schema.TextLine(title=_('Media API URL'),
-                                  required=False,)
-
     kalturaPartnerId = schema.TextLine(title=_('Kaltura Partner Id'),
                                   required=False,)
 
@@ -75,6 +72,6 @@ class IExtJsEditor(interface.Interface):
         default = u'/WistiaJsAPI/',
         required = False,)
 
-    autoUpload = schema.Bool(title=_('Alow image browser auto upload'),
+    autoUpload = schema.Bool(title=_('Allow image browser auto upload'),
         default = True,
         required = False,)
