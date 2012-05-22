@@ -99,25 +99,35 @@ Ext.ux.HTMLEditorMedia = function(config) {
                 }
         );
         var wistiaTemplate = new Ext.XTemplate(
-                '<tpl for=".">',
-                '<div class="inline-thumb-wrap">',
-                '<div class="thumb">',
-                '<a href="{src}" class="z-media {width: \'{width}\', height: \'{height}\', type: \'{type}\', preview: \'{preview}\', autoplay: {autoplay}, params:{allowfullscreen: true}, flashvars: {autoPlay: \'{autoplay}\', stillUrl: \'{stillUrl}\', accountKey: \'{accountKey}\', mediaID: \'wistia-production_{mediaID}\', embedServiceURL: \'{embedServiceURL}\', mediaDuration: \'{mediaDuration}\' }}">',
-                '<img alt="{alt}" src="{preview}" />',
-                '<span>{label}</span>',
-                '</a>',
-                '</div>',
-                '</div>',
-                '</tpl>',
-                {
-                    compiled: true,      // compile immediately
+            '<tpl for=".">',
+            '<div class="inline-thumb-wrap">',
+            '<div class="thumb">',
+            '<a href="{src}" class="z-media {width: \'{width}\', height: \'{height}\', type: \'{type}\', preview: \'{preview}\', autoplay: {autoplay}, params:{allowfullscreen: true}, flashvars: {autoPlay: \'{autoplay}\', stillUrl: \'{stillUrl}\', accountKey: \'{accountKey}\', mediaID: \'wistia-production_{mediaID}\', embedServiceURL: \'{embedServiceURL}\', mediaDuration: \'{mediaDuration}\' }}">',
+            '<img alt="{alt}" src="{preview}" />',
+            '<span>{label}</span>',
+            '</a>',
+            '</div>',
+            '</div>',
+            '</tpl>',
+            {
+                compiled: true,      // compile immediately
 
-                    disableFormats: true // reduce apply time since no formatting
-                }
+                disableFormats: true // reduce apply time since no formatting
+            }
         );
+        var youtubeTemplate = new Ext.XTemplate(
+            '<tpl for=".">',
+            '<iframe id="ytplayer" type="text/html" width="{width}" height="{height}" src="http://www.youtube.com/embed/{src}" frameborder="0" allowfullscreen>',
+            '</tpl>',
+            {
+                compiled: true,      // compile immediately
 
+                disableFormats: true // reduce apply time since no formatting
+            }
+        );
         var element = editor.win.document.createElement("div");
         var wistia = mediaUrl.form.findField('type').getValue().startsWith("wistia");
+        var youtube = mediaUrl.form.findField('type').getValue().startsWith("youtube");
         var embed = mediaUrl.form.findField('embed').getValue() || "", accountKey = "";
         var embedServiceURL = "", stillUrl = "", mediaDuration = "";
 
@@ -131,6 +141,8 @@ Ext.ux.HTMLEditorMedia = function(config) {
 
         if (wistia)
             template = wistiaTemplate;
+        else if (youtube)
+            template = youtubeTemplate;
         else
             template = thumbTemplate;
 
