@@ -211,6 +211,14 @@ Ext.ux.HTMLEditorMedia = function(config) {
     var sourceChanged = function() {
         var disabled = (mediaUrl.form.findField('src').getValue() == "");
         Ext.getCmp('insert-btn').setDisabled(disabled);
+
+        // automatic adding preview when media source has been entered
+        var video_code = mediaUrl.form.findField('src').getValue();
+        var type = mediaUrl.form.findField('type').getValue();
+        console.log(video_code+type);
+        if (type == "youtube" && video_code) {
+            mediaUrl.form.findField('preview').setValue(("http://img.youtube.com/vi/video_code/default.jpg").replace("video_code", video_code));
+        }
     };
 
     // if constraining size ratio then adjust height if width changed
@@ -267,7 +275,12 @@ Ext.ux.HTMLEditorMedia = function(config) {
                         name: 'src',
                         allowBlank: false,
                         listeners: {
-                            'change': {fn: sourceChanged, scope: this}
+                            'change': {fn: sourceChanged, scope: this},
+                            'render': function(c) {
+                                c.getEl().on('keyup', function() {
+                                    sourceChanged();
+                                }, c);
+                            }
                         }
                     }, {
                         xtype: 'textfield',
@@ -288,7 +301,10 @@ Ext.ux.HTMLEditorMedia = function(config) {
                         fieldLabel: 'Type',
                         forceSelection: true,
                         disableKeyFilter: true,
-                        name: 'type'
+                        name: 'type',
+                        listeners: {
+                            'change': {fn: sourceChanged, scope: this}
+                        }
                     }, {
                         xtype: "checkbox",
                         fieldLabel: "Autoplay",
