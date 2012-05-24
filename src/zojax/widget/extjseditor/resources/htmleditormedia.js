@@ -20,6 +20,7 @@ Ext.ux.HTMLEditorMedia = function(config) {
     var mediaBrowserDocument;
     var mediaBrowserKaltura;
     var mediaBrowserWistia;
+    var mediaBrowserYoutube;
 
     // other private variables
     var constrained = false;
@@ -117,7 +118,7 @@ Ext.ux.HTMLEditorMedia = function(config) {
         );
         var youtubeTemplate = new Ext.XTemplate(
             '<tpl for=".">',
-            '<iframe id="ytplayer" type="text/html" width="{width}" height="{height}" src="http://www.youtube.com/embed/{src}" frameborder="0" allowfullscreen>',
+            '<iframe id="ytplayer" type="text/html" width="{width}" height="{height}" src="http://www.youtube.com/embed/{src}?autoplay={autoplay}" frameborder="0" allowfullscreen>',
             '</tpl>',
             {
                 compiled: true,      // compile immediately
@@ -215,7 +216,6 @@ Ext.ux.HTMLEditorMedia = function(config) {
         // automatic adding preview when media source has been entered
         var video_code = mediaUrl.form.findField('src').getValue();
         var type = mediaUrl.form.findField('type').getValue();
-        console.log(video_code+type);
         if (type == "youtube" && video_code) {
             mediaUrl.form.findField('preview').setValue(("http://img.youtube.com/vi/video_code/default.jpg").replace("video_code", video_code));
         }
@@ -446,12 +446,26 @@ Ext.ux.HTMLEditorMedia = function(config) {
                 });
             }
 
+            if (config.youtube ) {
+                mediaBrowserYoutube = new Ext.ux.MediaBrowser({
+                    frame: false,
+                    border: false,
+                    autoWidth: true,
+                    title: 'Youtube media',
+
+                    // youtube settings
+                    youtube: config.youtube,
+                    // set the callback from the media browser
+                    callback: setMediaDetails
+                });
+            }
 
             var items = [];
             if (mediaBrowserSite) {items[items.length] = mediaBrowserSite;}
             if (mediaBrowserDocument) {items[items.length] = mediaBrowserDocument;}
             if (mediaBrowserKaltura) {items[items.length] = mediaBrowserKaltura;}
             if (mediaBrowserWistia) {items[items.length] = mediaBrowserWistia;}
+            if (mediaBrowserYoutube) {items.push(mediaBrowserYoutube);}
             items[items.length] = mediaUrl;
 
             var tabs = new Ext.TabPanel({

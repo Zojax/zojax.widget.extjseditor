@@ -38,6 +38,11 @@ WistiaProxy = function (conn)
 	Ext.apply(this, conn);
 };
 
+YoutubeProxy = new Ext.data.ScriptTagProxy({
+    method: 'GET',
+    url: 'https://gdata.youtube.com/feeds/api/videos?v=2&alt=jsonc'
+});
+
 Ext.extend(KalturaProxy, Ext.data.DataProxy,
 		{
 
@@ -138,7 +143,6 @@ Ext.extend(WistiaProxy, Ext.data.DataProxy,
 		// default implementation of doRequest for backwards compatibility with 2.0 proxies.
 		// If we're executing here, the action is probably "load".
 		// Call with the pre-3.0 method signature.
-		console.log(action, rs, params, reader, callback, scope, options)
 	},
 
 	handleErrorResponse : function(response, userContext)
@@ -156,6 +160,24 @@ CustomJsonReader = function(meta, recordType) {
 	CustomJsonReader.superclass.constructor.call(this, meta, recordType || meta.fields);
 
 }
+
+var YoutubeJsonReader = new Ext.data.JsonReader({
+    // metadata configuration options:
+    idProperty: 'id',
+    root: 'data.items',
+    totalProperty: 'data.totalItems',
+    fields: [
+        {name: 'url', mapping: 'id'},
+        {name: 'name', mapping: 'title'},
+        {name: 'type', defaultValue: 'youtube'},
+        {name: 'id'},
+        {name: 'title'},
+        {name: 'viewCount'},
+        {name: 'description'},
+        {name: 'alt', mapping: 'description'},
+        {name: 'preview', mapping: 'thumbnail.sqDefault'}
+    ]
+    });
 
 Ext.extend(CustomJsonReader, Ext.data.JsonReader, {
 
@@ -197,8 +219,7 @@ Ext.ux.MediaBrowser = function(config) {
 
 	// format loaded media data
 	var formatData = function(data) {
-
-		data.label = (data.title.length > 15) ? data.name.substr(0, 12) + '...' : data.title;
+        data.label = (data.title.length > 15) ? data.name.substr(0, 12) + '...' : data.title;
 		if (!data.preview && data.thumbnail && data.assets) {
 			// dealing with wistia
 			if (data.thumbnail.url.search("image_crop_resized") != -1){
@@ -229,7 +250,12 @@ Ext.ux.MediaBrowser = function(config) {
 		"<br/>Size: " + ((data.size < 1024) ? data.size + " bytes"
 				: (Math.round(((data.size * 10) / 1024)) / 10) + " KB");
 
-		if (!data.thumbwidth && !data.thumbheight) {
+        //youtube description breaks item view in template, therefore we set tip empty
+        if (data.type == 'youtube') {
+            data.tip = "";
+        }
+
+        if (!data.thumbwidth && !data.thumbheight) {
 			var thumb = thumbnailise(data.width, data.height);
 			data.thumbwidth = thumb[0];
 			data.thumbheight = thumb[1];
@@ -239,7 +265,7 @@ Ext.ux.MediaBrowser = function(config) {
 		data.thumbtop = "5px";
 		data.thumbwidth = Math.round(data.thumbwidth) + "px";
 		data.thumbheight = Math.round(data.thumbheight) + "px";
-		lookup[data.name] = data;
+		lookup[data.id] = data;
 		return data;
 	};
 
@@ -388,7 +414,7 @@ Ext.ux.MediaBrowser = function(config) {
 	// create template for media thumbnails
 	var thumbTemplate = new Ext.XTemplate(
 			'<tpl for=".">',
-			'<div class="thumb-wrap" id="{name}">',
+			'<div class="thumb-wrap" id="{id}">',
 			'<div class="thumb" ext:qtip="{tip}"><img src="{preview}" style="top:{thumbtop}; left:{thumbleft}; width:{thumbwidth}; height:{thumbheight}" /></div>',
 			'<span>{label}</span>',
 			'</div>',
@@ -450,7 +476,8 @@ Ext.ux.MediaBrowser = function(config) {
 			         {name: 'width', type: 'float', defaultValue: 320},
 			         {name: 'height', type: 'float', defaultValue: 240},
 			         {name: 'size', type: 'float', mapping: 'duration'},
-			         {name:'url', mapping:'dataUrl'}, {name:'preview', mapping:'thumbnailUrl'}
+			         {name:'url', mapping:'dataUrl'},
+                     {name:'preview', mapping:'thumbnailUrl'}
 			         ],
 			         listeners: {
 			        	 'beforeload': {fn: indicatorOn, scope: this},
@@ -503,14 +530,54 @@ Ext.ux.MediaBrowser = function(config) {
 			}
 		})
 	}
+    else if (config.youtube) {
+        YoutubeProxy.on({
+            beforeload: {
+                fn: function (proxy, o) {
+                    var filter = Ext.getCmp(filterId);
+                    proxy.conn = {
+                        method: "GET",
+                        url: 'https://gdata.youtube.com/feeds/api/videos?v=2&alt=jsonc&q='+filter.getValue()
+                    };
+                }
+            }
+        });
+        store = new Ext.data.Store({
+            proxy: YoutubeProxy,
+            reader: YoutubeJsonReader,
+            idProperty: 'youtube',
+            autoLoad: false,
+            fields: ['name','title', 'url', 'preview', 'description', 'autoplay', 'type'],
+            listeners: {
+                'beforeload': {fn: indicatorOn, scope: this},
+                'load': {fn: function() {indicatorOff();}, scope: this},
+                'exception': {fn: indicatorOff, scope: this}
+            },
+            paramNames:{
+                start : 'start-index',
+                limit : 'max-results'
+            }
+        });
 
+        store.on({
+            // youtube does not allow start-index=0, lets cut it
+            beforeload: {
+                fn: function (store, options) {
+                    if (options.params['start-index'] == 0){
+                        store.load({params: {'max-results': 30}});
+                        return false;
+                    }
+                }
+            }
+        });
+    }
 	// called when media selection is changed
 	var selectionChanged = function() {
 		var selNode = view.getSelectedNodes();
-		if (selNode && selNode.length > 0) {
+        if (selNode && selNode.length > 0) {
 			selNode = selNode[0];
-			data = lookup[selNode.id];
-			this.callback(data);
+            data = lookup[selNode.id];
+            this.callback(data);
 		} else {
 			this.callback({});
 		}
@@ -557,6 +624,16 @@ Ext.ux.MediaBrowser = function(config) {
 				start: 0,
 				limit: 30}});
 		}
+        else if (view.store.idProperty == "youtube" && filter.getValue()){
+
+            store.load({
+                params: {
+                    'max-results': 30,
+                    'q': filter.getValue()
+                }
+            })
+        }
+
 		else {
 			var f = [];
 			if (filter.getValue())
@@ -569,8 +646,43 @@ Ext.ux.MediaBrowser = function(config) {
 	var sortImages = function(){
 		//if (!config.kaltura.partnerId) return;
 		var v = Ext.getCmp(sortId).getValue();
-		view.store.sort(v, v == 'title' ? 'asc' : 'desc');
+
+
+        if (view.store.idProperty == "youtube"){
+            if (v == 'size') { v = 'viewcount' }
+            if (v == 'modified') { v = 'published' }
+            if (v == 'title') { v = 'relevance' }
+
+            store.load({
+                params: {
+                    'max-results': 30,
+                    'q': Ext.getCmp(filterId).getValue(),
+                    'orderby': v
+                }
+            })
+        } else {
+            view.store.sort(v, v == 'title' ? 'asc' : 'desc');
+        }
 	}
+    // custom youtube search modifiers
+    var storeDefaultValue = 'modified';
+    var configStore = new Ext.data.SimpleStore({
+        fields: ['name', 'desc'],
+        data : [['title', 'Title'],
+            ['size', 'File Size'],
+            ['modified', 'Last Modified']]
+    })
+    if ( store.idProperty == "youtube" ){
+        storeDefaultValue = 'relevance';
+        configStore = new Ext.data.SimpleStore({
+            fields: ['name', 'desc'],
+            data : [['relevance', 'Relevance'],
+                ['published', 'Date published'],
+                ['rating', 'Rating'],
+                ['viewCount', 'View Count']
+            ]
+        })
+    }
 
 	// apply additional config values
 	Ext.applyIf(config, {
@@ -607,13 +719,8 @@ Ext.ux.MediaBrowser = function(config) {
 			    	   displayField: 'desc',
 			    	   valueField: 'name',
 			    	   lazyInit: false,
-			    	   value: 'modified',
-			    	   store: new Ext.data.SimpleStore({
-			    		   fields: ['name', 'desc'],
-			    		   data : [['title', 'Title'],
-			    		           ['size', 'File Size'],
-			    		           ['modified', 'Last Modified']]
-			    	   }),
+			    	   value: storeDefaultValue,
+			    	   store: configStore,
 			    	   listeners: {
 			    		   'select': {fn:function(){sortImages()}, scope:this}
 			    	   }
