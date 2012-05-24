@@ -20,6 +20,7 @@ Ext.ux.HTMLEditorMedia = function(config) {
     var mediaBrowserDocument;
     var mediaBrowserKaltura;
     var mediaBrowserWistia;
+    var mediaBrowserYoutube;
 
     // other private variables
     var constrained = false;
@@ -99,25 +100,26 @@ Ext.ux.HTMLEditorMedia = function(config) {
                 }
         );
         var wistiaTemplate = new Ext.XTemplate(
-                '<tpl for=".">',
-                '<div class="inline-thumb-wrap">',
-                '<div class="thumb">',
-                '<a href="{src}" class="z-media {width: \'{width}\', height: \'{height}\', type: \'{type}\', preview: \'{preview}\', autoplay: {autoplay}, params:{allowfullscreen: true}, flashvars: {autoPlay: \'{autoplay}\', stillUrl: \'{stillUrl}\', accountKey: \'{accountKey}\', mediaID: \'wistia-production_{mediaID}\', embedServiceURL: \'{embedServiceURL}\', mediaDuration: \'{mediaDuration}\' }}">',
-                '<img alt="{alt}" src="{preview}" />',
-                '<span>{label}</span>',
-                '</a>',
-                '</div>',
-                '</div>',
-                '</tpl>',
-                {
-                    compiled: true,      // compile immediately
+            '<tpl for=".">',
+            '<div class="inline-thumb-wrap">',
+            '<div class="thumb">',
+            '<a href="{src}" class="z-media {width: \'{width}\', height: \'{height}\', type: \'{type}\', preview: \'{preview}\', autoplay: {autoplay}, params:{allowfullscreen: true}, flashvars: {autoPlay: \'{autoplay}\', stillUrl: \'{stillUrl}\', accountKey: \'{accountKey}\', mediaID: \'wistia-production_{mediaID}\', embedServiceURL: \'{embedServiceURL}\', mediaDuration: \'{mediaDuration}\' }}">',
+            '<img alt="{alt}" src="{preview}" />',
+            '<span>{label}</span>',
+            '</a>',
+            '</div>',
+            '</div>',
+            '</tpl>',
+            {
+                compiled: true,      // compile immediately
 
-                    disableFormats: true // reduce apply time since no formatting
-                }
+                disableFormats: true // reduce apply time since no formatting
+            }
         );
 
         var element = editor.win.document.createElement("div");
         var wistia = mediaUrl.form.findField('type').getValue().startsWith("wistia");
+        var youtube = mediaUrl.form.findField('type').getValue().startsWith("youtube");
         var embed = mediaUrl.form.findField('embed').getValue() || "", accountKey = "";
         var embedServiceURL = "", stillUrl = "", mediaDuration = "";
 
@@ -199,6 +201,13 @@ Ext.ux.HTMLEditorMedia = function(config) {
     var sourceChanged = function() {
         var disabled = (mediaUrl.form.findField('src').getValue() == "");
         Ext.getCmp('insert-btn').setDisabled(disabled);
+
+        // automatic adding preview when media source has been entered
+        var video_code = mediaUrl.form.findField('src').getValue();
+        var type = mediaUrl.form.findField('type').getValue();
+        if (type == "youtube" && video_code) {
+            mediaUrl.form.findField('preview').setValue(("http://img.youtube.com/vi/video_code/default.jpg").replace("video_code", video_code));
+        }
     };
 
     // if constraining size ratio then adjust height if width changed
@@ -255,7 +264,12 @@ Ext.ux.HTMLEditorMedia = function(config) {
                         name: 'src',
                         allowBlank: false,
                         listeners: {
-                            'change': {fn: sourceChanged, scope: this}
+                            'change': {fn: sourceChanged, scope: this},
+                            'render': function(c) {
+                                c.getEl().on('keyup', function() {
+                                    sourceChanged();
+                                }, c);
+                            }
                         }
                     }, {
                         xtype: 'textfield',
@@ -276,7 +290,10 @@ Ext.ux.HTMLEditorMedia = function(config) {
                         fieldLabel: 'Type',
                         forceSelection: true,
                         disableKeyFilter: true,
-                        name: 'type'
+                        name: 'type',
+                        listeners: {
+                            'change': {fn: sourceChanged, scope: this}
+                        }
                     }, {
                         xtype: "checkbox",
                         fieldLabel: "Autoplay",
@@ -418,12 +435,26 @@ Ext.ux.HTMLEditorMedia = function(config) {
                 });
             }
 
+            if (config.youtube ) {
+                mediaBrowserYoutube = new Ext.ux.MediaBrowser({
+                    frame: false,
+                    border: false,
+                    autoWidth: true,
+                    title: 'Youtube media',
+
+                    // youtube settings
+                    youtube: config.youtube,
+                    // set the callback from the media browser
+                    callback: setMediaDetails
+                });
+            }
 
             var items = [];
             if (mediaBrowserSite) {items[items.length] = mediaBrowserSite;}
             if (mediaBrowserDocument) {items[items.length] = mediaBrowserDocument;}
             if (mediaBrowserKaltura) {items[items.length] = mediaBrowserKaltura;}
             if (mediaBrowserWistia) {items[items.length] = mediaBrowserWistia;}
+            if (mediaBrowserYoutube) {items.push(mediaBrowserYoutube);}
             items[items.length] = mediaUrl;
 
             var tabs = new Ext.TabPanel({
