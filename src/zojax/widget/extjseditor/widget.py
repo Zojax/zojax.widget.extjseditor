@@ -110,7 +110,8 @@ class ExtJSEditorWidget(textarea.TextAreaWidget):
                                                                   serviceUrl=configlet.kalturaServiceUrl,
                                                                   serviceBase=configlet.kalturaServiceBase,
                                                                   userId=configlet.kalturaUserId),
-                                                     wistia = dict(mediaPath=configlet.wistiaApiProxyUrl)
+                                                     wistia = dict(mediaPath=configlet.wistiaApiProxyUrl),
+                                                     youtube = dict()
                                                      )),
                 'linkConfig': simplejson.dumps(dict(contentUrl=contentUrl, rootTitle=getattr(IItem(site, None),'title',''))),
                 'autoUpload': str(configlet.autoUpload).lower(),
