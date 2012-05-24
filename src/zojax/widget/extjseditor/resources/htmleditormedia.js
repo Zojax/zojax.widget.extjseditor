@@ -116,16 +116,7 @@ Ext.ux.HTMLEditorMedia = function(config) {
                 disableFormats: true // reduce apply time since no formatting
             }
         );
-        var youtubeTemplate = new Ext.XTemplate(
-            '<tpl for=".">',
-            '<iframe id="ytplayer" type="text/html" width="{width}" height="{height}" src="http://www.youtube.com/embed/{src}?autoplay={autoplay}" frameborder="0" allowfullscreen>',
-            '</tpl>',
-            {
-                compiled: true,      // compile immediately
 
-                disableFormats: true // reduce apply time since no formatting
-            }
-        );
         var element = editor.win.document.createElement("div");
         var wistia = mediaUrl.form.findField('type').getValue().startsWith("wistia");
         var youtube = mediaUrl.form.findField('type').getValue().startsWith("youtube");
@@ -142,8 +133,6 @@ Ext.ux.HTMLEditorMedia = function(config) {
 
         if (wistia)
             template = wistiaTemplate;
-        else if (youtube)
-            template = youtubeTemplate;
         else
             template = thumbTemplate;
 
