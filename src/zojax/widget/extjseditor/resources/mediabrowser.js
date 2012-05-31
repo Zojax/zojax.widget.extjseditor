@@ -276,26 +276,26 @@ Ext.ux.MediaBrowser = function(config) {
 	});
 
 	// called if media was uploaded successfully
-	var uploadSuccess = function(frm, response) {
-		indicatorOff();
-		var response = Ext.util.JSON.decode(response.response.responseText);
-		if (response.success == 'true') {
-			frm.reset();
+	var uploadValidation = function(frm, response) {
+        console.log(response);
+        var rt = response.response.responseText;
+        var filter = rt.match(/^<pre.*>((?:.|\n)*)<\/pre>$/i);
+        if (filter) {
+            rt = filter[1];
+        }
+        var response = Ext.util.JSON.decode(rt);
+        if (response.success == true) {
+
+            frm.reset();
 			this.reset();
 			view.refresh();
 			view.select(response.file);
 			uploadwin.hide();
 		} else {
-			Ext.MessageBox.alert("Upload Error", response.message + ' ' + response.success);
+            Ext.MessageBox.alert("Upload Error", response.message + ' ' + response.success);
 		}
 	};
 
-	// called if media was not uploaded successfully
-	var uploadFailure = function(frm, response) {
-		indicatorOff();
-		var response = Ext.util.JSON.decode(response.response.responseText);
-		Ext.MessageBox.alert("Upload Failed", response.responseText);
-	};
 
 	var uploadFileForm = function(record) {
 		var fp = new Ext.FormPanel({
@@ -324,7 +324,7 @@ Ext.ux.MediaBrowser = function(config) {
 				xtype: 'combo',
 				store: $.fn.media.defaults.types,
 				fieldLabel: 'Media Type',
-				allowBlank: true,
+				allowBlank: false,
 				name: 'type',
 				forceSelection: true,
 				disableKeyFilter: true
@@ -351,13 +351,13 @@ Ext.ux.MediaBrowser = function(config) {
 					if(fp.getForm().isValid()){
 						fp.getForm().submit({
 							url: config.uploadURL,
-							waitMsg: 'Uploading your media...',
-							success: uploadSuccess.createDelegate(this),
-							failure: uploadFailure.createDelegate(this),
-							score: this
+                            waitMsg: 'Uploading your media...',
+							success: uploadValidation.createDelegate(this),
+                            failure: uploadValidation.createDelegate(this),
+							scope: this
 						});
 
-					}}},{
+                    }}},{
 						text: 'Reset',
 						scope: this,
 						handler: function(){
@@ -758,6 +758,7 @@ Ext.ux.MediaBrowser = function(config) {
 		store.reload();
 		Ext.getCmp(filterId).reset();
 	};
+
 }
 
 //Ext.ux.MediaBrowser
