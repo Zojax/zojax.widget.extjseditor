@@ -152,6 +152,7 @@
     padding: 5px;
     display: block;
     border: 1px;
+    width: 100%;
   }
 
   /* loading indicator */
