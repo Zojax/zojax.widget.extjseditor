@@ -40,6 +40,7 @@
     <resource path="extjs-editor/imagebrowser.js" />
     <resource path="extjs-editor/htmleditormedia.js" />
     <resource path="extjs-editor/mediabrowser.js" />
+    <resource path="extjs-editor/fontsizeplugin.js" />
     <resource path="extjs-editor/contentbrowser.js" />
     <resource path="extjs-editor/htmleditorlink.js" />
     <resource path="extjs-editor/loadingindicator.js" />

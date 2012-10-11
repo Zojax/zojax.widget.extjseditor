@@ -189,3 +189,6 @@
     z-index: auto !important;
   }
 }
+.x-edit-custom {
+    background: transparent url(extjs-editor/link.png) no-repeat;
+}

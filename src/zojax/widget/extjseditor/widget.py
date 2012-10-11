@@ -47,7 +47,8 @@ Ext.EventManager.onDocumentReady(function(){
        id:'cmp-%(id)s',
        plugins: [new Ext.ux.HTMLEditorLink(%(linkConfig)s),
        new Ext.ux.HTMLEditorImage('%(url1)s', '%(url2)s', %(imgmax)s, %(autoUpload)s),
-       new Ext.ux.HTMLEditorMedia(%(mediaConfig)s)
+       new Ext.ux.HTMLEditorMedia(%(mediaConfig)s),
+       new Ext.ux.form.HtmlEditor.HR()
        ]})
     });
 </script>"""
