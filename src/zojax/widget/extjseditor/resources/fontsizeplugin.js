@@ -15,26 +15,21 @@ Ext.ux.form.HtmlEditor.HR = Ext.extend(Ext.util.Observable, {
                 fontEl.setAttribute("class", "font_size");
                 fontEl.appendChild(content);
                 range.insertNode(fontEl);
-                if (fontEl.parentNode.nodeName == "SPAN" && fontEl.parentNode.getAttribute("class") == "font_size") {
-                    fontEl.parentNode.parentNode.replaceChild(fontEl, fontEl.parentNode)
-                }
                 selection.selectAllChildren(fontEl);
             }
         };
         // create the combo instance
         this.combo = new Ext.form.ComboBox({
             typeAhead:true,
-            enableKeyEvents:true,
+            enableKeyEvents:false,
             triggerAction:'all',
             lazyRender:true,
             mode:'local',
-            store:[8, 10, 12, 14, 16, 18, 20, 24, 26, 28, 32, 36, 40, 48],
+            store:[8, 10, 12, 14, 16, 18, 20, 24, 26, 28, 32, 36, 40, 48, 54, 60, 72],
             width:50,
             listeners:{
                 scope:cmp,
-                'select':changeFont,
-                'keypress':changeFont
-
+                'select':changeFont
             }
 
         });
@@ -45,9 +40,3 @@ Ext.ux.form.HtmlEditor.HR = Ext.extend(Ext.util.Observable, {
     }
 
 });
-
-
-
-
-
-
