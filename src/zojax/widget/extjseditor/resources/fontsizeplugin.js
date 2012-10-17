@@ -51,11 +51,6 @@ Ext.ux.form.HtmlEditor.HR = Ext.extend(Ext.util.Observable, {
                 }
             }
         };
-        var saveSelection = function (area) {
-            alert('area is alive!!!');
-            var range = document.selection.createRange();
-            alert(range.text)
-        };
         // create the combo instance
         this.combo = new Ext.form.ComboBox({
             typeAhead:true,
