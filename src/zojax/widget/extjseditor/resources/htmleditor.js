@@ -29,25 +29,25 @@ Ext.ux.HTMLEditorToolbar = Ext.extend(Ext.Toolbar, {
 	    this.tools.insert(index + i, tools[i]);
 	}
     },
-    
+
     // insert tools before another tool (pre-render)
     insertToolsBefore: function(itemId, tools) {
 	var index = this.tools.indexOfKey(itemId);
 	this.insertTools(index, tools);
     },
-  
+
     // insert tools after another tool (pre-render)
     insertToolsAfter: function(itemId, tools) {
 	var index = this.tools.indexOfKey(itemId) + 1;
 	this.insertTools(index, tools);
     },
-    
+
     // render tools (performed after tools/plugins have been configured/reordered)
     renderTool: function(tool) {
 	// cater for new tbcombo component
 	// created to split configuration from render
 	if (typeof tool == "object" && tool.xtype && tool.xtype == "tbcombo") {
-	    
+
 	    // not catered for in Ext.Toolbar.add function
 	    // as it defaults to addField instead of addItem
 	    this.addItem(Ext.ComponentMgr.create(tool));
@@ -91,7 +91,7 @@ Ext.ux.HTMLEditorToolbar.ComboBox = function(config) {
     if (! this.defaultValue) {
 	this.defaultValue = this.opts[0].value;
     }
-  
+
     // call Ext.Toolbar.Item constructor passing combobox
     Ext.ux.HTMLEditorToolbar.ComboBox.superclass.constructor.call(this, selEl);
 }
@@ -104,7 +104,7 @@ Ext.extend(Ext.ux.HTMLEditorToolbar.ComboBox, Ext.Toolbar.Item, {
     render: function(td) {
 	// call Ext.Toolbar.Item.render
 	Ext.ux.HTMLEditorToolbar.ComboBox.superclass.render.call(this, td);
-	
+
 	// add handler for combobox change event
 	Ext.EventManager.on(this.el, 'change', this.handler, this.scope);
     }
@@ -132,22 +132,22 @@ Ext.ux.HTMLEditor = Ext.extend(Ext.form.HtmlEditor, {
 	'alllists',
 	'sourceedit'
     ],
-    
+
     // as an alternative, the toolbarItemExcludes list can be used to
     // exclude items from the toolbarItem list
-    toolbarItemExcludes: [],
-    
+    toolbarItemExcludes: ['allfontsizes','increasefontsize','decreasefontsize'],
+
     // overrides Ext.form.HtmlEditor.initComponent
     // first function to be called upon creation of the editor
     initComponent: function() {
 	// call Ext.form.HtmlEditor.initComponent
 	Ext.ux.HTMLEditor.superclass.initComponent.call(this);
-	
+
 	// add important event missing from Ext.form.HtmlEditor
 	this.addEvents({
 	    editorevent: true
 	});
-	
+
 	// remove any toolbarItemExcludes from the toolbarItems array
 	for (var i = 0, iMax = this.toolbarItemExcludes.length; i < iMax; i++) {
 	    var item = this.toolbarItemExcludes[i].toLowerCase();
@@ -158,14 +158,14 @@ Ext.ux.HTMLEditor = Ext.extend(Ext.form.HtmlEditor, {
 		}
 	    }
 	}
-	
+
 	// create the editor toolbar
 	this.tb = new Ext.ux.HTMLEditorToolbar();
-	
+
 	// create the toolbar items
 	this.createTools(this.toolbarItems);
     },
-    
+
     // overrides Ext.form.HtmlEditor.createFontOptions
     createFontOptions: function() {
 	var opts = [], ffs = this.fontFamilies, ff;
@@ -192,7 +192,7 @@ Ext.ux.HTMLEditor = Ext.extend(Ext.form.HtmlEditor, {
 	    tabIndex: -1
 	};
     },
-    
+
     // create known tools based on the passed item list (initially
     // from the toolbarItems list) and add it to the tools collection.
     // this function allows random tool allocation as opposed
@@ -223,42 +223,42 @@ Ext.ux.HTMLEditor = Ext.extend(Ext.form.HtmlEditor, {
 		    });
   		}
 		break;
-  
+
 		// add the bold button
             case 'bold':
 		this.tb.addTools(this.btn('bold'));
 		break;
-		
+
 		// add the italic button
             case 'italic':
 		this.tb.addTools(this.btn('italic'));
 		break;
-		
+
 		// add the underline button
             case 'underline':
 		this.tb.addTools(this.btn('underline'));
 		break;
-		
+
 		// add all format buttons (with a leading separator)
             case 'allformats':
 		this.createTools(['-', 'bold', 'italic', 'underline']);
 		break;
-		
+
 		// add the increasefontsize button
             case 'increasefontsize':
 		this.tb.addTools(this.btn('increasefontsize', false, false, this.adjustFont));
 		break;
-  
+
 		// add the decreasefontsize button
             case 'decreasefontsize':
 		this.tb.addTools(this.btn('decreasefontsize', false, false, this.adjustFont));
 		break;
-		
+
 		// add both fontsize buttons (with a leading separator)
             case 'allfontsizes':
 		this.createTools(['-', 'increasefontsize', 'decreasefontsize']);
 		break;
-		
+
 		// add the forecolor button and associated menu
             case 'forecolor':
 		this.tb.addTools({
@@ -280,7 +280,7 @@ Ext.ux.HTMLEditor = Ext.extend(Ext.form.HtmlEditor, {
 		    })
 		});
 		break;
-		
+
 		// add the backcolor button and associated menu
             case 'backcolor':
 		this.tb.addTools({
@@ -311,67 +311,67 @@ Ext.ux.HTMLEditor = Ext.extend(Ext.form.HtmlEditor, {
 		    })
 		});
 		break;
-		
+
 		// add both color buttons (with a leading separator)
             case 'allcolors':
 		this.createTools(['-', 'forecolor', 'backcolor']);
 		break;
-		
+
 		// add the justifyleft button
             case 'justifyleft':
 		this.tb.addTools(this.btn('justifyleft'));
 		break;
-		
+
 		// add the justifycenter button
             case 'justifycenter':
 		this.tb.addTools(this.btn('justifycenter'));
 		break;
-		
+
 		// add the justifyright button
             case 'justifyright':
 		this.tb.addTools(this.btn('justifyright'));
 		break;
-		
+
 		// add all alignment buttons (with a leading separator)
             case 'allalignments':
 		this.createTools(['-', 'justifyleft', 'justifycenter', 'justifyright']);
 		break;
-		
+
 		// add the link button
             case 'link':
 		if (!Ext.isSafari2 && this.enableLinks) {
 		    this.tb.addTools(this.btn('createlink', false, false, this.createLink));
 		}
 		break;
-		
+
 		// add the link button (with a leading separator)
             case 'alllinks':
 		if (! Ext.isSafari && this.enableLinks) {
 		    this.createTools(['-', 'link']);
 		}
 		break;
-		
+
 		// add the orderedlist button
             case 'orderedlist':
 		if (! Ext.isSafari) {
 		    this.tb.addTools(this.btn('insertorderedlist'));
 		}
 		break;
-		
+
 		// add the unorderedlist button
             case 'unorderedlist':
 		if (! Ext.isSafari) {
 		    this.tb.addTools(this.btn('insertunorderedlist'));
 		}
 		break;
-		
+
 		// add both list buttons (with a leading separator)
             case 'alllists':
 		if (! Ext.isSafari) {
 		    this.createTools(['-', 'orderedlist', 'unorderedlist']);
 		}
 		break;
-		
+
 		// add the sourceedit button
             case 'sourceedit':
 		if (! Ext.isSafari) {
@@ -380,33 +380,33 @@ Ext.ux.HTMLEditor = Ext.extend(Ext.form.HtmlEditor, {
 		    }));
 		}
 		break;
-		
+
 		// allows for '-', 'separator', ' ', '->', labels, or other item types
             default:
 		this.tb.addTools(item);
-		
+
 	    }
 	}
     },
-    
+
     cleanHtml: function(html) {
     	return html;
     },
 
     // overrides Ext.form.HtmlEditor.createToolbar
     // most functionality has been removed as this is called
-    // upon render 
+    // upon render
     createToolbar: function() {
 	// render toolbar
 	this.tb.render(this.wrap.dom.firstChild);
-	
+
 	// inherited
 	this.tb.el.on('click', function(e) {
 	    e.preventDefault();
 	});
-	
+
     },
-    
+
     // overrides Ext.form.HtmlEditor.getDocMarkup
     // provides ability to include stylesheets in the editor document
     // created by bpjohnson (see http://extjs.com/forum/showthread.php?t=9588)
@@ -420,19 +420,19 @@ Ext.ux.HTMLEditor = Ext.extend(Ext.form.HtmlEditor, {
 	markup = markup + '</head><body></body></html>';
 	return markup;
     },
-    
+
     // overrides Ext.form.HtmlEditor.onEditorEvent
     onEditorEvent: function(e) {
 	// call Ext.form.HtmlEditor.onEditorEvent
 	Ext.ux.HTMLEditor.superclass.onEditorEvent.call(this, e);
-	
+
 	// fire new editorevent to tell plugins that an event occurred
 	// in the editor.
 	// this saves plugins from having to monitor multiple events
 	// i.e. 'click', 'keyup', etc.
 	this.fireEvent('editorevent', this, e);
     },
-    
+
     // overrides Ext.form.HtmlEditor.updateToolbar
     // does not call superclass function as much of it was no
     // longer needed, but duplicates some code
@@ -442,7 +442,7 @@ Ext.ux.HTMLEditor = Ext.extend(Ext.form.HtmlEditor, {
 	    this.onFirstFocus();
 	    return;
 	}
-	
+
 	// loop through toolbar items and update status based on
 	// query values return from the browser (if configured)
 	this.tb.items.each(function(item) {
@@ -459,18 +459,18 @@ Ext.ux.HTMLEditor = Ext.extend(Ext.form.HtmlEditor, {
 		}
 	    }
 	}, this);
-	
+
 	var onpush = function(editor, html)
-    { 
+    {
 		editor.getEditorBody().innerHTML = html.replace(/(href=\".+|src=\".+)\&amp\;/gi, function($0, $1){
 			return $1 ? $1 + '&' : $0;
         });
     }
     this.on('beforepush', onpush);
-	
+
 	// inherited
 	Ext.menu.MenuMgr.hideAll();
-	
+
 	// inherited
 	this.syncValue();
     }
