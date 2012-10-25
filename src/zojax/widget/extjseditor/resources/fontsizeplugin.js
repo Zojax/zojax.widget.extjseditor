@@ -96,18 +96,6 @@ rangy.createModule("WrappedSelection",function(l,K){function H(b){return(b||wind
 
 Ext.ns('Ext.ux.form.HtmlEditor');
 var saved_selection = null;
-if (Ext.isIE) {
-    window.onload = function () {
-        $('iframe').livequery(function () {
-            body = $(this).contents().find('body');
-            $(body).mouseup(function () {
-                var iframe = $('iframe')[0];
-                var sel = rangy.getIframeSelection(iframe);
-                saved_selection = sel;
-            });
-        })
-    };
-}
 Ext.ux.form.HtmlEditor.HR = Ext.extend(Ext.util.Observable, {
     init:function (cmp) {
         this.cmp = cmp;
@@ -117,21 +105,23 @@ Ext.ux.form.HtmlEditor.HR = Ext.extend(Ext.util.Observable, {
             fontEl.style.fontSize = font_size + 'px';
             fontEl.style.lineHeight="normal";
             fontEl.setAttribute("class", "font_size");
+            var remove_filter = function () {
+                all = this.getElementsByTagName('*')
 
+                for (var i = -1, l = all.length; ++i < l;) {
+                    if ($(all[i]).text() == "") {
+                        $(all[i]).remove();
+                    }
+                }
+                return $(this).text() == "" && $(this).children().length == 0;
+            }
             if (Ext.isIE) {
                 //Internet Explorer logic
-                var remove_filter = function () {
-                    all = this.getElementsByTagName('*')
 
-                    for (var i = -1, l = all.length; ++i < l;) {
-                        if ($(all[i]).text() == "") {
-                            $(all[i]).remove();
-                        }
-                    }
-                    return $(this).text() == "" && $(this).children().length == 0;
-                }
                 if (saved_selection) {
                     var iframe = $('iframe')[0];
+                    var sel = saved_selection;
+//                    console.log(sel)
                     sel = saved_selection
                     setTimeout("console.log('ie...')", 100);
                     selected_html = sel.toHtml();
@@ -148,16 +138,6 @@ Ext.ux.form.HtmlEditor.HR = Ext.extend(Ext.util.Observable, {
             }
             else {
                 //opera, ff, chrome logic
-                var remove_filter = function () {
-                    all = this.getElementsByTagName('*')
-
-                    for (var i = -1, l = all.length; ++i < l;) {
-                        if ($(all[i]).text() == "") {
-                            $(all[i]).remove();
-                        }
-                    }
-                    return $(this).text() == "" && $(this).children().length == 0;
-                }
                 var iframe = $('iframe')[0];
                 var sel = rangy.getIframeSelection(iframe);
 
@@ -186,9 +166,24 @@ Ext.ux.form.HtmlEditor.HR = Ext.extend(Ext.util.Observable, {
             mode:'local',
             store:[8, 10, 12, 14, 16, 18, 20, 24, 26, 28, 32, 36, 40, 48, 54, 60, 72],
             width:50,
+            id:'font-size-combo',
             listeners:{
                 scope:cmp,
-                select:changeFont
+                select:changeFont,
+                afterrender: function(){
+                    console.log('iframe loaded');
+                    if (Ext.isIE) {
+                        toolbar = $('.x-html-editor-tb');
+                        console.log(toolbar);
+                        $(toolbar).mouseenter(function () {
+                            console.log('entered!!!');
+                            var iframe = $('iframe')[0]
+                            var sel = rangy.getIframeSelection(iframe);
+                            saved_selection = sel;
+                            console.log(sel.toHtml());
+                        })
+                    }
+                },
             }
 
         });
@@ -196,6 +191,7 @@ Ext.ux.form.HtmlEditor.HR = Ext.extend(Ext.util.Observable, {
     },
     onRender:function () {
         this.cmp.getToolbar().add(this.combo);
+
     }
 
 });
