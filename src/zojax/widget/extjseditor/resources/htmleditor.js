@@ -246,17 +246,17 @@ Ext.ux.HTMLEditor = Ext.extend(Ext.form.HtmlEditor, {
 
 		// add the increasefontsize button
             case 'increasefontsize':
-		this.tb.addTools(this.btn('increasefontsize', false, false, this.adjustFont));
+		//this.tb.addTools(this.btn('increasefontsize', false, false, this.adjustFont));
 		break;
 
 		// add the decreasefontsize button
             case 'decreasefontsize':
-		this.tb.addTools(this.btn('decreasefontsize', false, false, this.adjustFont));
+		//this.tb.addTools(this.btn('decreasefontsize', false, false, this.adjustFont));
 		break;
 
 		// add both fontsize buttons (with a leading separator)
             case 'allfontsizes':
-		this.createTools(['-', 'increasefontsize', 'decreasefontsize']);
+		//this.createTools(['-', 'increasefontsize', 'decreasefontsize']);
 		break;
 
 		// add the forecolor button and associated menu

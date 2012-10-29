@@ -44,6 +44,7 @@ Ext.EventManager.onDocumentReady(function(){
     var htmlEditor = new Ext.form.HtmlEditor({
        width: %(width)s, height: %(height)s, applyTo: '%(id)s',
        enableLinks: false,
+       enableFontSize: false,
        id:'cmp-%(id)s',
        plugins: [new Ext.ux.HTMLEditorLink(%(linkConfig)s),
        new Ext.ux.HTMLEditorImage('%(url1)s', '%(url2)s', %(imgmax)s, %(autoUpload)s),

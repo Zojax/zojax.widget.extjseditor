@@ -115,11 +115,12 @@ Ext.ux.form.HtmlEditor.HR = Ext.extend(Ext.util.Observable, {
                 }
                 return $(this).text() == "" && $(this).children().length == 0;
             }
+            var iframe = $('iframe')[0];
             if (Ext.isIE) {
                 //Internet Explorer logic
 
                 if (saved_selection) {
-                    var iframe = $('iframe')[0];
+
                     var sel = saved_selection;
 //                    console.log(sel)
                     sel = saved_selection
@@ -138,7 +139,6 @@ Ext.ux.form.HtmlEditor.HR = Ext.extend(Ext.util.Observable, {
             }
             else {
                 //opera, ff, chrome logic
-                var iframe = $('iframe')[0];
                 var sel = rangy.getIframeSelection(iframe);
 
                 selected_html = sel.toHtml();
@@ -156,6 +156,8 @@ Ext.ux.form.HtmlEditor.HR = Ext.extend(Ext.util.Observable, {
                 }
 
             }
+            $(iframe.contentWindow).focus();
+            $(iframe.contentWindow.document).find('body').click()
         };
         // create the combo instance
         this.combo = new Ext.form.ComboBox({
@@ -183,7 +185,7 @@ Ext.ux.form.HtmlEditor.HR = Ext.extend(Ext.util.Observable, {
                             console.log(sel.toHtml());
                         })
                     }
-                },
+                }
             }
 
         });
