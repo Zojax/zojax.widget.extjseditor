@@ -111,7 +111,7 @@ Ext.extend(KalturaProxy, Ext.data.DataProxy,
 
 	handleErrorResponse : function(response, userContext)
 	{
-		alert("Error while calling web service method:" + $.toJSON(response));
+//		alert("Error while calling web service method:" + $.toJSON(response));
 	},
 
 	loadResponse : function (response, userContext, methodName)
@@ -292,7 +292,7 @@ Ext.ux.MediaBrowser = function(config) {
 			view.select(response.file);
 			uploadwin.hide();
 		} else {
-            Ext.MessageBox.alert("Upload Error", response.message + ' ' + response.success);
+//            Ext.MessageBox.alert("Upload Error", response.message + ' ' + response.success);
 		}
 	};
 
