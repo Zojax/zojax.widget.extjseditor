@@ -277,7 +277,6 @@ Ext.ux.MediaBrowser = function(config) {
 
 	// called if media was uploaded successfully
 	var uploadValidation = function(frm, response) {
-        console.log(response);
         var rt = response.response.responseText;
         var filter = rt.match(/^<pre.*>((?:.|\n)*)<\/pre>$/i);
         if (filter) {
@@ -352,6 +351,7 @@ Ext.ux.MediaBrowser = function(config) {
 						fp.getForm().submit({
 							url: config.uploadURL,
                             waitMsg: 'Uploading your media...',
+                            headers: { 'Content-Type': 'application/json' },
 							success: uploadValidation.createDelegate(this),
                             failure: uploadValidation.createDelegate(this),
 							scope: this
