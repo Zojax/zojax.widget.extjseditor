@@ -124,7 +124,7 @@ Ext.ux.form.HtmlEditor.HR = Ext.extend(Ext.util.Observable, {
                     var sel = saved_selection;
 //                    console.log(sel)
                     sel = saved_selection
-                    setTimeout("console.log('ie...')", 100);
+//                    setTimeout("console.log('ie...')", 100);
                     selected_html = sel.toHtml();
                     selected_html = selected_html.replace(/(font-size: )\d+(px)/g, "$1" + font_size + "$2");
                     selected_html = selected_html.replace(/(size=")\d+(")/g, "");
@@ -173,16 +173,16 @@ Ext.ux.form.HtmlEditor.HR = Ext.extend(Ext.util.Observable, {
                 scope:cmp,
                 select:changeFont,
                 afterrender: function(){
-                    console.log('iframe loaded');
+//                    console.log('iframe loaded');
                     if (Ext.isIE) {
                         toolbar = $('.x-html-editor-tb');
-                        console.log(toolbar);
+//                        console.log(toolbar);
                         $(toolbar).mouseenter(function () {
-                            console.log('entered!!!');
+//                            console.log('entered!!!');
                             var iframe = $('iframe')[0]
                             var sel = rangy.getIframeSelection(iframe);
                             saved_selection = sel;
-                            console.log(sel.toHtml());
+//                            console.log(sel.toHtml());
                         })
                     }
                 }
