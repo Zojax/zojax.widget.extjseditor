@@ -31,7 +31,8 @@ Ext.ux.HTMLEditorImage = function(url1, url2, imgmax, autoUpload) {
         if (Ext.isIE) {
             // ie specific code
             return function () {
-                var selection = editor.doc.selection;
+                var doc = editor.getDoc();
+                var selection = doc.selection;
                 if (selection.type == "Control") {
                     var element = selection.createRange()(0);
                     if (element.nodeName.toLowerCase() == 'img') {
@@ -134,7 +135,8 @@ Ext.ux.HTMLEditorImage = function(url1, url2, imgmax, autoUpload) {
             // ie-specific code
             return function () {
                 // get selected text/range
-                var selection = editor.doc.selection;
+                var doc = editor.getDoc();
+                var selection = doc.selection;
                 var range = selection.createRange();
 
                 // insert the image over the selected text/range
