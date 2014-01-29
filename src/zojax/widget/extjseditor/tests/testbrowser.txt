@@ -65,6 +65,8 @@ Let's edit content, editor includes js to head and includes extjs.js
     <script type="text/javascript" src="http://localhost/.../jquery.js"></script>
     <script type="text/javascript" src="http://localhost/.../extjs.js"></script>
     <link rel="stylesheet" type="text/css" href="http://localhost/.../extjs.css" />
+    <script type="text/javascript" src="http://localhost/.../jquery-plugins.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://localhost/.../jquery-plugins.css" />
     <script type="text/javascript" src="http://localhost/.../extjs-widgets.js"></script>
     <link rel="stylesheet" type="text/css" href="http://localhost/.../extjs-widgets.css" />
     <script type="text/javascript">
@@ -74,23 +76,21 @@ Let's edit content, editor includes js to head and includes extjs.js
         var htmlEditor = new Ext.form.HtmlEditor({
            width: 600, height: 300, applyTo: 'form-widgets-text',
            enableLinks: false,
+           enableFontSize: false,
            id:'cmp-form-widgets-text',
            plugins: [new Ext.ux.HTMLEditorLink({"contentUrl": "http://localhost/@@content.browser/.../contentManagerAPI/", "rootTitle": ""}),
            new Ext.ux.HTMLEditorImage('http://localhost/@@content.attachments/.../imageManagerAPI/', 'http://localhost/@@content.attachments/.../imageManagerAPI/', {'width': 480, 'height': 360}, true),
-           new Ext.ux.HTMLEditorMedia({"wistia": {"mediaPath": "/WistiaJsAPI/"}, "youtube": {}, "mediaUrl1": "http://localhost/@@content.attachments/.../mediaManagerAPI/", "mediaUrl2": "http://localhost/@@content.attachments/.../mediaManagerAPI/", "kaltura": {"serviceBase": "/api_v3/index.php?service=", "partnerId": null, "serviceUrl": "http://www.kaltura.com", "userSecret": null, "userId": null, "adminSecret": null}})
+           new Ext.ux.HTMLEditorMedia({"wistia": {"mediaPath": "/WistiaJsAPI/"}, "youtube": {}, "mediaUrl1": "http://localhost/@@content.attachments/.../mediaManagerAPI/", "mediaUrl2": "http://localhost/@@content.attachments/.../mediaManagerAPI/", "kaltura": {"serviceBase": "/api_v3/index.php?service=", "partnerId": null, "serviceUrl": "http://www.kaltura.com", "userSecret": null, "userId": null, "adminSecret": null}}),
+           new Ext.ux.form.HtmlEditor.HR()
            ]})
         });
     </script>
     ...
-    <div class="z-form-fieldset">
-       <div class="z-form-field">
-          <label for="form-widgets-text" title="Page body text.">Body</label>
-          <span class="z-form-fieldRequired">&nbsp;</span>
-          <div class="z-form-help">Page body text.</div>
-          <div><div><textarea id="form-widgets-text" name="form.widgets.text" class="widget-extjs-richtext required richtext-field"
-            style="height: 300px; width: 600px"></textarea></div></div>
-       </div>
-    </div>
+      <div class="z-form-fieldset">
+        <div class="z-form-field">
+      <label for="form-widgets-text" title="Page body text.">Body</label>
+      <span class="z-form-fieldRequired">&nbsp;</span>
+      <div class="z-form-help">Page body text.</div>
     ...
     </html>
 
